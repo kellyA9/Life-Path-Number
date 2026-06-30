@@ -25,7 +25,11 @@
 
     * { box-sizing: border-box; }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
 
     body {
       margin: 0;
@@ -1369,6 +1373,41 @@
         min-height: 210px;
       }
       .number-mark strong { font-size: 116px; }
+    }
+
+    @media (max-width: 380px) {
+      .section {
+        padding-inline: 18px;
+      }
+
+      .fact {
+        padding: 12px 9px;
+      }
+
+      .fact.is-birth strong {
+        font-size: clamp(16px, 5.2vw, 18px);
+      }
+
+      .profile-title {
+        font-size: clamp(27px, 8vw, 30px);
+      }
+
+      .combo-title {
+        font-size: clamp(26px, 7.7vw, 29px);
+      }
+
+      .nine-color-title {
+        font-size: clamp(25px, 7.4vw, 28px);
+      }
+
+      .nine-color-title-sub {
+        font-size: .7em;
+      }
+
+      .profile-flow h3,
+      .profile-flow .reading-title {
+        font-size: clamp(20px, 5.6vw, 22px);
+      }
     }
 
     @media print {
