@@ -232,7 +232,13 @@
     }
 
     .primary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      width: 100%;
       min-height: 52px;
+      padding: 0 18px;
       border: 0;
       border-radius: 6px;
       cursor: pointer;
@@ -706,6 +712,7 @@
     }
 
     .trait-card .chip {
+      position: relative;
       display: inline-flex;
       justify-content: center;
       align-items: center;
@@ -714,6 +721,30 @@
       font-size: 19px;
       background: rgba(255,255,255,.78);
       border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    }
+
+    .profile-title span {
+      display: inline;
+    }
+
+    .profile-title-break::before {
+      content: "｜";
+    }
+
+    .combo-title span {
+      display: inline;
+    }
+
+    .combo-title-number::before {
+      content: "：";
+    }
+
+    .nine-color-title span {
+      display: inline;
+    }
+
+    .nine-color-title-sub::before {
+      content: "：";
     }
 
     .practice-card {
@@ -989,11 +1020,24 @@
     }
 
     .life-color-name {
+      display: grid;
+      gap: 2px;
       color: var(--accent-ink);
       font-size: clamp(26px, 3vw, 34px);
       line-height: 1.05;
       font-weight: 950;
       letter-spacing: 0;
+    }
+
+    .life-color-primary,
+    .life-color-secondary {
+      display: block;
+    }
+
+    .life-color-secondary {
+      font-size: .72em;
+      line-height: 1.12;
+      color: color-mix(in srgb, var(--accent-ink) 84%, #5d5044);
     }
 
     .life-color-note {
@@ -1012,12 +1056,103 @@
       .hero { min-height: auto; padding-top: 32px; }
       .hero::before { width: 360px; right: -120px; opacity: .75; }
       .hero::after { font-size: 76px; white-space: normal; }
+      .hero h1 {
+        width: 100%;
+        white-space: nowrap;
+        font-size: clamp(34px, 10.2vw, 44px);
+        line-height: 1.08;
+      }
+      .hero-copy {
+        font-size: clamp(22px, 7vw, 30px);
+        line-height: 1.85;
+      }
+      .hero-pills {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .hero-pill {
+        justify-content: center;
+        min-height: 46px;
+        padding: 8px 8px;
+        font-size: clamp(15px, 4.4vw, 18px);
+        white-space: nowrap;
+      }
+      .hero-pill::before {
+        width: 7px;
+        height: 7px;
+        flex: 0 0 auto;
+      }
+      .entry-panel {
+        padding: 22px 18px;
+      }
+      .primary-button {
+        min-height: 58px;
+        font-size: clamp(19px, 5.4vw, 24px);
+        line-height: 1.25;
+      }
       h2 {
         font-size: clamp(26px, 7vw, 34px);
         overflow-wrap: anywhere;
       }
       .section {
         padding-inline: clamp(22px, 6vw, 30px);
+      }
+      .profile-title {
+        font-size: clamp(30px, 8.2vw, 34px);
+        line-height: 1.13;
+      }
+      .profile-title span {
+        display: block;
+        white-space: nowrap;
+      }
+      .profile-title-break {
+        margin-top: 4px;
+      }
+      .profile-title-break::before {
+        content: "";
+      }
+      .combo-title {
+        font-size: clamp(31px, 8.4vw, 36px);
+        line-height: 1.13;
+      }
+      .combo-title span {
+        display: block;
+      }
+      .combo-title-text {
+        white-space: nowrap;
+      }
+      .combo-title-number {
+        margin-top: 4px;
+        white-space: nowrap;
+      }
+      .combo-title-number::before {
+        content: "";
+      }
+      .nine-color-title {
+        font-size: clamp(28px, 7.6vw, 33px);
+        line-height: 1.18;
+      }
+      .nine-color-title span {
+        display: block;
+      }
+      .nine-color-title-main {
+        white-space: nowrap;
+      }
+      .nine-color-title-sub {
+        margin-top: 4px;
+        white-space: nowrap;
+        font-size: .76em;
+      }
+      .nine-color-title-sub::before {
+        content: "";
+      }
+      .destiny-title span {
+        display: block;
+      }
+      #destinySection .lead {
+        white-space: nowrap;
+        font-size: clamp(15px, 4vw, 17px);
       }
       .hero-grid,
       .destiny-board,
@@ -1037,16 +1172,189 @@
         grid-template-columns: 1fr;
       }
 
+      .color-energy-card {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        align-items: stretch;
+        min-height: 0;
+        padding: 18px;
+      }
+
+      .color-chip-large {
+        width: 56px;
+        height: 56px;
+        border-radius: 18px;
+        font-size: 24px;
+      }
+
+      .color-energy-copy {
+        display: grid;
+        grid-template-columns: 56px minmax(0, 1fr);
+        grid-template-rows: 56px auto;
+        column-gap: 14px;
+        row-gap: 10px;
+        align-items: center;
+      }
+
+      .color-energy-copy h3 {
+        grid-column: 2;
+        align-self: center;
+        margin: 0;
+        font-size: clamp(22px, 6.2vw, 26px);
+        line-height: 1.18;
+      }
+
+      .color-energy-copy p {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        font-size: clamp(16px, 4.4vw, 18px);
+        line-height: 1.75;
+        text-align: left;
+      }
+
+      .color-energy-card .color-chip-large {
+        grid-column: 1;
+        grid-row: 1;
+      }
+
+      .color-energy-card .color-energy-copy {
+        grid-column: 1;
+        grid-row: 1;
+      }
+
       .trait-card .chips {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .trait-card {
+        padding: 20px;
+      }
+
+      .trait-card .chip {
+        justify-content: flex-start;
+        min-height: 46px;
+        padding: 10px 12px 10px 32px;
+        border-radius: 18px;
+        color: #2c2118;
+        background:
+          linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,255,255,.8)),
+          color-mix(in srgb, var(--accent-soft) 72%, white);
+        border-color: color-mix(in srgb, var(--accent) 18%, #e7ddd4);
+        font-size: clamp(18px, 5.1vw, 21px);
+        line-height: 1.18;
+        box-shadow: 0 8px 18px rgba(58, 48, 39, .05);
+      }
+
+      .trait-card .chip::before {
+        content: "";
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+        transform: translateY(-50%);
+      }
+
+      .life-color-card {
+        padding: 20px;
+        gap: 16px;
+      }
+
+      .life-color-card::before {
+        width: 118px;
+        height: 118px;
+        right: -30px;
+        top: -28px;
+      }
+
+      .life-color-card::after {
+        width: 54px;
+        height: 54px;
+        right: 18px;
+        bottom: 18px;
+        opacity: .75;
+      }
+
+      .life-color-main {
+        display: grid;
+        grid-template-columns: 74px minmax(0, 1fr);
+        gap: 16px;
+        align-items: center;
+      }
+
+      .life-color-chip {
+        width: 68px;
+        height: 68px;
+        border-radius: 20px;
+      }
+
+      .life-color-name {
+        gap: 4px;
+        font-size: clamp(28px, 8.6vw, 34px);
+        line-height: 1.02;
+      }
+
+      .life-color-secondary {
+        font-size: clamp(18px, 5.4vw, 22px);
+        line-height: 1.16;
+      }
+
+      .life-color-note {
+        font-size: clamp(16px, 4.4vw, 18px);
+        line-height: 1.85;
+      }
+
+      .profile-flow h3,
+      .profile-flow .reading-title {
+        font-size: clamp(21px, 6vw, 24px);
+        line-height: 1.2;
+        white-space: nowrap;
+        word-break: keep-all;
+        overflow-wrap: normal;
+      }
+
+      .profile-flow .card,
+      .profile-flow .reading-box {
+        padding: 20px;
       }
 
       .facts-grid {
-        grid-template-columns: repeat(2, minmax(140px, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .fact {
+        min-height: 112px;
+        padding: 14px 11px;
+      }
+
+      .fact span {
+        min-height: 1.3em;
+        color: #5f6d66;
+        font-size: clamp(14px, 3.6vw, 15px);
+        line-height: 1.22;
+        white-space: nowrap;
+        word-break: keep-all;
+        overflow-wrap: normal;
       }
 
       .fact strong {
-        font-size: clamp(20px, 6vw, 28px);
+        max-width: 100%;
+        font-size: clamp(24px, 7.2vw, 29px);
+        letter-spacing: 0;
+        transform-origin: left center;
+      }
+
+      .fact.is-birth strong {
+        font-size: clamp(19px, 5.5vw, 22px);
+      }
+
+      .fact.is-combo strong {
+        font-size: clamp(20px, 5.8vw, 23px);
       }
 
       .number-mark {
@@ -1104,7 +1412,7 @@
           <div class="hero-pills" aria-label="測驗重點">
             <span class="hero-pill">輸入生日</span>
             <span class="hero-pill">看見天賦</span>
-            <span class="hero-pill">找到節奏</span>
+            <span class="hero-pill">看懂自己</span>
           </div>
         </div>
 
@@ -2312,6 +2620,16 @@
       };
     }
 
+    function renderColorName(value) {
+      const text = String(value || "").trim();
+      const match = text.match(/^(.+?)(（.+）)$/);
+      if (!match) return `<span class="life-color-primary">${paragraph(text)}</span>`;
+      return `
+        <span class="life-color-primary">${paragraph(match[1])}</span>
+        <span class="life-color-secondary">${paragraph(match[2])}</span>
+      `;
+    }
+
     function applyTheme(number) {
       const theme = colorThemes[number] || colorThemes[8];
       document.documentElement.style.setProperty("--accent", theme.accent);
@@ -2367,15 +2685,15 @@
       $("#destinySection").innerHTML = `
         <div class="section-head">
           <p class="section-kicker">你的數字命盤</p>
-          <h2>你的生涯運數解析報告</h2>
+          <h2 class="destiny-title"><span>生涯運數</span><span>解析報告</span></h2>
           <p class="lead">協助你看見自己的慣性與天賦。</p>
         </div>
         <div class="destiny-board">
           <div class="facts-grid">
             <article class="fact is-birth"><span>你的生辰數</span><strong>${result.birthNumber}</strong></article>
-            <article class="fact"><span>你的天賦數</span><strong>${result.talentNumber}</strong></article>
-            <article class="fact"><span>你的生涯運數</span><strong>${result.pathNumber}</strong></article>
-            <article class="fact"><span>你的天賦組合</span><strong>${escapeHtml(normalizeComboLabel(combo?.combo_label) || result.comboLabel)}</strong></article>
+            <article class="fact is-talent"><span>你的天賦數</span><strong>${result.talentNumber}</strong></article>
+            <article class="fact is-path"><span>你的生涯運數</span><strong>${result.pathNumber}</strong></article>
+            <article class="fact is-combo"><span>你的天賦組合</span><strong>${escapeHtml(normalizeComboLabel(combo?.combo_label) || result.comboLabel)}</strong></article>
           </div>
           <div class="number-mark" aria-label="生涯運數 ${result.pathNumber}">
             <div>
@@ -2425,7 +2743,10 @@
       $("#profileSection").innerHTML = `
         <div class="section-head">
           <p class="section-kicker">生涯運數</p>
-          <h2>你的生涯運數：${profile.number}｜${escapeHtml(lifePath?.title || "")}</h2>
+          <h2 class="profile-title">
+            <span>你的生涯運數：${profile.number}</span>
+            <span class="profile-title-break">${escapeHtml(lifePath?.title || "")}</span>
+          </h2>
         </div>
         <div class="profile-flow">
           <div class="profile-summary">
@@ -2437,7 +2758,7 @@
               <h3>本命色</h3>
               <div class="life-color-main">
                 <span class="life-color-chip" aria-hidden="true"></span>
-                <strong class="life-color-name">${paragraph(colorCopy.name)}</strong>
+                <strong class="life-color-name">${renderColorName(colorCopy.name)}</strong>
               </div>
               <p class="life-color-note">${paragraph(colorCopy.note)}</p>
             </article>
@@ -2472,7 +2793,10 @@
       $("#comboSection").innerHTML = `
         <div class="section-head">
           <p class="section-kicker">專屬天賦組合</p>
-          <h2>你的專屬天賦組合：${escapeHtml(label)}</h2>
+          <h2 class="combo-title">
+            <span class="combo-title-text">你的專屬天賦組合</span>
+            <span class="combo-title-number">${escapeHtml(label)}</span>
+          </h2>
           <p class="lead">依照天賦數與生涯運數對照表，這是你的完整組合編號。</p>
         </div>
         <div class="reading-box">
@@ -2509,7 +2833,10 @@
       $("#nineColorSection").innerHTML = `
         <div class="section-head">
           <p class="section-kicker">九色能量</p>
-          <h2>九色能量：不同時刻，借用不同力量</h2>
+          <h2 class="nine-color-title">
+            <span class="nine-color-title-main">9色能量</span>
+            <span class="nine-color-title-sub">不同時刻，借用不同力量</span>
+          </h2>
           <p class="lead">不只是你的本命色可以用——每一種顏色都有它的力量。根據你當天面對的事情，選擇對應的顏色穿戴，讓那個數字的能量支持你。</p>
         </div>
         <div class="nine-color-grid">
