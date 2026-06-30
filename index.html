@@ -1096,9 +1096,9 @@
         white-space: nowrap;
       }
       .hero-pill:last-child {
-        grid-column: 1 / -1;
-        justify-self: start;
-        width: min(50%, 150px);
+        grid-column: 1;
+        justify-self: stretch;
+        width: 100%;
       }
       .hero-pill::before {
         width: 7px;
@@ -1115,12 +1115,16 @@
         font-size: clamp(17px, 4.8vw, 20px);
       }
       .primary-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         min-height: 56px;
         padding: 8px 12px;
-        font-size: clamp(16px, 4.6vw, 19px);
+        font-size: clamp(15px, 4.2vw, 17px);
         line-height: 1.2;
-        white-space: normal;
-        overflow-wrap: anywhere;
+        text-align: center;
+        white-space: nowrap;
+        overflow-wrap: normal;
       }
       h2 {
         font-size: clamp(26px, 7vw, 34px);
@@ -1161,7 +1165,7 @@
         content: "";
       }
       .nine-color-title {
-        font-size: clamp(28px, 7.6vw, 33px);
+        font-size: clamp(24px, 6.3vw, 28px);
         line-height: 1.18;
       }
       .nine-color-title span {
@@ -1173,7 +1177,7 @@
       .nine-color-title-sub {
         margin-top: 4px;
         white-space: nowrap;
-        font-size: .76em;
+        font-size: .62em;
       }
       .nine-color-title-sub::before {
         content: "";
@@ -1374,6 +1378,12 @@
         overflow-wrap: normal;
       }
 
+      .fact.is-path span,
+      .fact.is-combo span {
+        font-size: clamp(10px, 2.7vw, 12px);
+        letter-spacing: 0;
+      }
+
       .fact strong {
         max-width: 100%;
         font-size: clamp(22px, 6.5vw, 26px);
@@ -1425,11 +1435,11 @@
       }
 
       .nine-color-title {
-        font-size: clamp(25px, 7.4vw, 28px);
+        font-size: clamp(22px, 6.4vw, 25px);
       }
 
       .nine-color-title-sub {
-        font-size: .7em;
+        font-size: .6em;
       }
 
       .profile-flow h3,
