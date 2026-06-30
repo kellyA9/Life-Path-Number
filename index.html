@@ -1,0 +1,2575 @@
+﻿<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>生涯運數解析報告</title>
+  <style>
+    :root {
+      --bg: #f8f4ee;
+      --ink: #24302f;
+      --text: #2d332f;
+      --muted: #68736c;
+      --paper: #ffffff;
+      --paper-soft: #f3eee6;
+      --line: rgba(45, 51, 47, .14);
+      --accent: #2f7772;
+      --accent-fill: #2f7772;
+      --accent-soft: rgba(47, 119, 114, .12);
+      --accent-ink: #1f4f4b;
+      --warm: #d7a55b;
+      --rose: #c86b73;
+      --shadow: 0 22px 60px rgba(53, 66, 61, .13);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+      line-height: 1.72;
+      background: var(--bg);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        linear-gradient(115deg, rgba(248, 244, 238, .94), rgba(255, 255, 255, .72) 46%, rgba(238, 229, 217, .96)),
+        url("assets/life-chart-bg.png") center / cover no-repeat;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        repeating-linear-gradient(90deg, rgba(47, 119, 114, .035) 0 1px, transparent 1px 88px),
+        repeating-linear-gradient(0deg, rgba(199, 143, 98, .03) 0 1px, transparent 1px 88px),
+        linear-gradient(135deg, var(--accent-soft), transparent 34%),
+        linear-gradient(180deg, rgba(248, 244, 238, .1), rgba(248, 244, 238, .92) 78%);
+      pointer-events: none;
+    }
+
+    @keyframes gentleTurn {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    button, input { font: inherit; }
+
+    .site-shell {
+      min-height: 100vh;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      align-items: center;
+      padding: 48px clamp(18px, 5vw, 72px);
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: min(44vw, 520px);
+      aspect-ratio: 1;
+      right: clamp(20px, 6vw, 100px);
+      top: clamp(28px, 8vh, 96px);
+      border: 1px solid rgba(47, 119, 114, .16);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(255,255,255,.16) 0 33%, transparent 34%),
+        repeating-conic-gradient(from 18deg, rgba(47,119,114,.18) 0 2deg, transparent 2deg 16deg);
+      mask-image: radial-gradient(circle, transparent 0 26%, #000 27% 100%);
+      pointer-events: none;
+      animation: gentleTurn 36s linear infinite;
+    }
+
+    .hero::after {
+      content: "生涯運數";
+      position: absolute;
+      left: clamp(18px, 5vw, 74px);
+      bottom: clamp(18px, 6vh, 64px);
+      color: rgba(47, 119, 114, .08);
+      font-size: clamp(74px, 14vw, 190px);
+      font-weight: 950;
+      line-height: .8;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      width: min(1160px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, 440px);
+      gap: clamp(28px, 5vw, 70px);
+      align-items: center;
+    }
+
+    .eyebrow {
+      width: fit-content;
+      margin: 0 0 18px;
+      padding: 6px 12px;
+      border: 1px solid rgba(47, 119, 114, .18);
+      border-radius: 999px;
+      color: var(--accent-ink);
+      background: var(--accent-soft);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(42px, 8vw, 92px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .hero h1 {
+      width: fit-content;
+      background: linear-gradient(105deg, #1d2928 0%, var(--accent-ink) 42%, var(--warm) 72%, var(--rose) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 18px 46px rgba(39, 53, 49, .08);
+    }
+
+    .hero-copy {
+      max-width: 690px;
+      margin: 24px 0 0;
+      color: #4b5550;
+      font-size: clamp(17px, 2.1vw, 22px);
+    }
+
+    .hero-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid rgba(47, 119, 114, .14);
+      border-radius: 999px;
+      color: #31423e;
+      background: rgba(255,255,255,.7);
+      box-shadow: 0 12px 28px rgba(53, 66, 61, .08);
+      font-weight: 850;
+    }
+
+    .hero-pill::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--warm));
+    }
+
+    .entry-panel {
+      position: relative;
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, .94);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.88)),
+        radial-gradient(circle at 95% 0%, var(--accent-soft), transparent 34%);
+      box-shadow:
+        0 24px 72px rgba(53, 66, 61, .15),
+        0 10px 30px color-mix(in srgb, var(--accent) 12%, transparent);
+      backdrop-filter: blur(16px);
+      overflow: hidden;
+    }
+
+    .entry-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: linear-gradient(90deg, var(--accent), var(--warm), var(--rose));
+    }
+
+    .entry-panel label {
+      display: block;
+      margin-bottom: 10px;
+      color: #3a2a1e;
+      font-weight: 900;
+    }
+
+    .date-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    input[type="date"] {
+      width: 100%;
+      min-height: 54px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      background: #fffdf7;
+    }
+
+    .primary-button {
+      min-height: 52px;
+      border: 0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    .primary-button {
+      color: white;
+      background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent-ink) 72%, var(--warm)));
+      box-shadow: 0 12px 28px rgba(47, 119, 114, .22);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero::before { animation: none; }
+    }
+
+    .hint,
+    .error {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .error {
+      min-height: 24px;
+      color: #a3382d;
+      font-weight: 800;
+    }
+
+    .report {
+      display: none;
+      background: linear-gradient(180deg, #ffffff, #f8f4ee);
+      border-top: 1px solid rgba(45, 51, 47, .08);
+    }
+
+    .report.is-visible {
+      display: block;
+    }
+
+    .report-inner {
+      width: min(1120px, calc(100% - 34px));
+      margin: 0 auto;
+      padding: clamp(34px, 6vw, 76px) 0;
+    }
+
+    .section {
+      position: relative;
+      margin: 0 0 clamp(18px, 3vw, 30px);
+      padding: clamp(24px, 4.5vw, 48px);
+      border: 1px solid rgba(45, 51, 47, .1);
+      border-radius: 8px;
+      background:
+        linear-gradient(115deg, rgba(255,255,255,.88) 0 34%, rgba(255,255,255,.68) 34% 36%, transparent 36% 100%),
+        linear-gradient(135deg, var(--accent-soft), transparent 42%),
+        rgba(255, 255, 255, .88);
+      box-shadow:
+        0 22px 64px rgba(53, 66, 61, .11),
+        inset 0 1px 0 rgba(255,255,255,.76);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .section::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 6px;
+      height: 100%;
+      background: var(--accent);
+      opacity: .65;
+    }
+
+    .section::after {
+      content: "";
+      position: absolute;
+      right: -34px;
+      top: -34px;
+      width: 168px;
+      height: 168px;
+      border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+      border-radius: 28px;
+      transform: rotate(18deg);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.55), transparent),
+        var(--accent-soft);
+      opacity: .45;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .section > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-head {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin-bottom: clamp(20px, 3vw, 30px);
+    }
+
+    .section-kicker {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.72), transparent),
+        var(--accent-soft);
+      box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 10%, transparent);
+    }
+
+    .section-kicker::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    h2 {
+      margin: 0;
+      color: #251b14;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      color: #352619;
+      font-size: 20px;
+      line-height: 1.28;
+    }
+
+    p { margin: 0; }
+
+    .lead {
+      max-width: 770px;
+      margin-top: 14px;
+      color: #5d5044;
+      font-size: 17px;
+    }
+
+    .destiny-board {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: clamp(18px, 3vw, 34px);
+      align-items: stretch;
+    }
+
+    .number-mark {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 320px;
+      overflow: hidden;
+      border: 1px solid color-mix(in srgb, var(--accent) 30%, white);
+      border-radius: 26px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.96), rgba(255,255,255,.78)),
+        radial-gradient(circle at 50% 46%, var(--accent-soft), transparent 54%),
+        linear-gradient(135deg, var(--accent-soft), rgba(255,255,255,.9));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.72),
+        0 26px 58px rgba(53, 66, 61, .1),
+        0 18px 48px color-mix(in srgb, var(--accent) 16%, transparent);
+    }
+
+    .number-mark::before {
+      content: "";
+      position: absolute;
+      width: 236px;
+      height: 236px;
+      left: 50%;
+      top: 52%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(255,255,255,.96) 0 45%, transparent 46%),
+        conic-gradient(from 140deg, var(--accent), rgba(255,255,255,.92), color-mix(in srgb, var(--accent) 55%, #d7a55b), var(--accent));
+      box-shadow:
+        inset 0 0 0 16px rgba(255,255,255,.66),
+        0 18px 38px color-mix(in srgb, var(--accent) 20%, transparent);
+      opacity: .9;
+    }
+
+    .number-mark::after {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px dashed color-mix(in srgb, var(--accent) 24%, transparent);
+      border-radius: 20px;
+      pointer-events: none;
+    }
+
+    .number-mark > div {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      min-height: 250px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .number-mark span {
+      display: block;
+      color: color-mix(in srgb, var(--accent-ink) 78%, #251b14);
+      font-size: 15px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .number-mark span:first-child {
+      align-self: center;
+      padding: 7px 14px;
+      border: 1px solid color-mix(in srgb, var(--accent) 28%, white);
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      box-shadow: 0 8px 20px rgba(53, 66, 61, .08);
+    }
+
+    .number-mark span:last-child {
+      margin-top: 4px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent-ink) 80%, var(--accent)));
+      box-shadow: 0 12px 26px color-mix(in srgb, var(--accent) 28%, transparent);
+    }
+
+    .number-mark strong {
+      display: block;
+      color: var(--ink);
+      margin: 8px 0 6px;
+      font-size: 154px;
+      line-height: .82;
+      text-align: center;
+      text-shadow: 0 10px 26px rgba(37, 27, 20, .12);
+    }
+
+    .facts-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .fact,
+    .card,
+    .reading-box {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.82));
+      box-shadow:
+        0 14px 34px rgba(53, 66, 61, .075),
+        inset 0 1px 0 rgba(255,255,255,.75);
+    }
+
+    .fact {
+      position: relative;
+      min-height: 104px;
+      padding: 16px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .fact,
+    .card,
+    .reading-box,
+    .color-energy-card {
+      transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    }
+
+    @media (hover: hover) {
+      .fact:hover,
+      .card:hover,
+      .reading-box:hover,
+      .color-energy-card:hover {
+        transform: translateY(-3px);
+        border-color: color-mix(in srgb, var(--accent) 28%, white);
+        box-shadow:
+          0 20px 46px rgba(53, 66, 61, .1),
+          0 12px 26px color-mix(in srgb, var(--accent) 10%, transparent);
+      }
+    }
+
+    .fact::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      opacity: .75;
+    }
+
+    .fact span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .fact strong {
+      display: block;
+      margin-top: 6px;
+      color: #2c2118;
+      font-size: clamp(22px, 2.4vw, 30px);
+      line-height: 1.08;
+      white-space: nowrap;
+      word-break: normal;
+      overflow-wrap: normal;
+    }
+
+    .fact.is-birth strong {
+      font-size: clamp(22px, 2vw, 27px);
+      letter-spacing: 0;
+    }
+
+    .trinity {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .trinity .card {
+      position: relative;
+      min-height: 260px;
+      padding: 22px;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,255,255,.8) 46%, var(--accent-soft)),
+        rgba(255,255,255,.88);
+    }
+
+    .trinity .card::before {
+      content: "";
+      position: absolute;
+      width: 112px;
+      height: 112px;
+      right: -24px;
+      top: -28px;
+      border: 1px solid rgba(47, 119, 114, .18);
+      border-radius: 50%;
+    }
+
+    .layer-label {
+      color: var(--accent);
+      font-weight: 900;
+    }
+
+    .layer-number {
+      margin: 14px 0 12px;
+      color: var(--accent);
+      font-size: 76px;
+      font-weight: 950;
+      line-height: .9;
+    }
+
+    .card-note {
+      color: #625447;
+      font-size: 15px;
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .profile-flow {
+      display: grid;
+      gap: 18px;
+    }
+
+    .profile-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, .95fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .profile-readings {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .profile-aside {
+      display: grid;
+      gap: 14px;
+    }
+
+    .profile-flow h3,
+    .profile-flow .reading-title {
+      color: #2d2119;
+      font-size: 24px;
+      line-height: 1.25;
+      font-weight: 950;
+    }
+
+    .profile-flow .card,
+    .profile-flow .reading-box {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .portrait-box {
+      min-height: 100%;
+      background:
+        linear-gradient(140deg, rgba(255,255,255,.96), rgba(255,255,255,.86) 52%, var(--accent-soft)),
+        radial-gradient(circle at 96% 12%, var(--accent-soft), transparent 36%);
+    }
+
+    .portrait-box::after {
+      content: "";
+      position: absolute;
+      right: -38px;
+      bottom: -46px;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      border: 24px solid var(--accent-soft);
+      pointer-events: none;
+    }
+
+    .aside-card {
+      background: rgba(255,255,255,.9);
+      border-left: 5px solid color-mix(in srgb, var(--accent) 72%, white);
+    }
+
+    .aside-card p,
+    .aside-card .reading-list {
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    .trait-card {
+      min-height: 0;
+      padding: 22px 24px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,255,255,.84)),
+        var(--accent-soft);
+    }
+
+    .trait-card .chips {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 16px;
+      gap: 12px;
+    }
+
+    .trait-card .chip {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 54px;
+      padding: 10px 14px;
+      font-size: 19px;
+      background: rgba(255,255,255,.78);
+      border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    }
+
+    .practice-card {
+      border-left: 6px solid var(--accent);
+      background:
+        linear-gradient(135deg, var(--accent-soft), transparent 48%),
+        rgba(255,255,255,.9);
+    }
+
+    .card {
+      padding: 20px;
+    }
+
+    .span-2 { grid-column: 1 / -1; }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .chip {
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: #2c2118;
+      background: var(--accent-soft);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .reading-box {
+      padding: 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.86));
+    }
+
+    .reading-box + .reading-box { margin-top: 14px; }
+
+    .reading-title {
+      margin-bottom: 8px;
+      color: var(--accent);
+      font-weight: 950;
+    }
+
+    .reading-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding-left: 1.2em;
+      color: #34271d;
+    }
+
+    .reading-list li::marker {
+      color: var(--accent);
+    }
+
+    .original {
+      color: #34271d;
+      font-size: 17px;
+      font-weight: 760;
+    }
+
+    .note {
+      color: #5d5044;
+    }
+
+    .closing {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(24px, 4vw, 34px);
+      border-radius: var(--radius);
+      color: var(--ink);
+      background: linear-gradient(135deg, rgba(255,255,255,.96), var(--accent-soft));
+      border: 1px solid var(--line);
+    }
+
+    .closing::after {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      right: -60px;
+      top: -70px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      pointer-events: none;
+    }
+
+    .closing .lead {
+      color: #4b5550;
+    }
+
+    .disclaimer {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .reveal-section {
+      display: block;
+    }
+
+    #destinySection {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,255,255,.84)),
+        linear-gradient(90deg, var(--accent-soft), transparent 55%);
+    }
+
+    #trinitySection .trinity {
+      position: relative;
+    }
+
+    #trinitySection .trinity::before {
+      content: "";
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      top: 52px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-soft), transparent);
+      pointer-events: none;
+    }
+
+    #comboSection {
+      background:
+        linear-gradient(135deg, var(--accent-soft), rgba(255,255,255,.92) 34%, rgba(255,255,255,.88));
+    }
+
+    #comboSection .reading-box {
+      border-left: 6px solid var(--accent);
+      padding: clamp(22px, 4vw, 34px);
+      font-size: 18px;
+    }
+
+    #profileSection .profile-grid .card:first-child {
+      background: linear-gradient(135deg, var(--accent-soft), rgba(255,255,255,.9));
+    }
+
+    #nineColorSection {
+      background:
+        radial-gradient(circle at 88% 8%, rgba(255,255,255,.95) 0 22%, transparent 48%),
+        linear-gradient(135deg, rgba(255,255,255,.96), var(--accent-soft));
+    }
+
+    .nine-color-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 26px;
+    }
+
+    .color-energy-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: 78px minmax(0, 1fr);
+      gap: 16px;
+      align-items: center;
+      min-height: 150px;
+      padding: 20px;
+      border: 1px solid rgba(43, 35, 28, .1);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.82);
+      box-shadow: 0 18px 42px rgba(58, 48, 39, .08);
+      overflow: hidden;
+    }
+
+    .color-energy-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -18px -34px auto;
+      width: 118px;
+      height: 118px;
+      border-radius: 50%;
+      background: var(--energy-soft);
+      opacity: .8;
+    }
+
+    .color-chip-large {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      width: 74px;
+      height: 74px;
+      border-radius: 24px;
+      color: #fff;
+      background: var(--energy-color);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.48),
+        0 16px 26px var(--energy-soft);
+      font-size: 30px;
+      font-weight: 950;
+    }
+
+    .color-energy-copy {
+      position: relative;
+      z-index: 1;
+    }
+
+    .color-energy-copy h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .color-energy-copy p {
+      margin: 0;
+      color: #5c5047;
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    .life-color-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 22px 24px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.94), rgba(255,255,255,.82)),
+        radial-gradient(circle at 88% 12%, var(--accent-soft), transparent 42%);
+    }
+
+    .life-color-card::before {
+      content: "";
+      position: absolute;
+      width: 148px;
+      height: 148px;
+      right: -38px;
+      top: -42px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: .18;
+      pointer-events: none;
+    }
+
+    .life-color-card::after {
+      content: "";
+      position: absolute;
+      inset: auto 18px 18px auto;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 1px solid color-mix(in srgb, var(--accent) 36%, transparent);
+      pointer-events: none;
+    }
+
+    .life-color-main {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    .life-color-chip {
+      width: 62px;
+      height: 62px;
+      flex: 0 0 auto;
+      border-radius: 20px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.35), transparent 42%),
+        var(--accent-fill);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.62),
+        0 16px 30px color-mix(in srgb, var(--accent) 26%, transparent);
+    }
+
+    .life-color-name {
+      color: var(--accent-ink);
+      font-size: clamp(26px, 3vw, 34px);
+      line-height: 1.05;
+      font-weight: 950;
+      letter-spacing: 0;
+    }
+
+    .life-color-note {
+      position: relative;
+      z-index: 1;
+      color: #5d5044;
+      font-size: 15px;
+      line-height: 1.7;
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+    }
+
+    .hidden { display: none; }
+
+    @media (max-width: 900px) {
+      .hero { min-height: auto; padding-top: 32px; }
+      .hero::before { width: 360px; right: -120px; opacity: .75; }
+      .hero::after { font-size: 76px; white-space: normal; }
+      h2 {
+        font-size: clamp(26px, 7vw, 34px);
+        overflow-wrap: anywhere;
+      }
+      .section {
+        padding-inline: clamp(22px, 6vw, 30px);
+      }
+      .hero-grid,
+      .destiny-board,
+      .two-column {
+        grid-template-columns: 1fr;
+      }
+      .facts-grid,
+      .trinity,
+      .profile-grid,
+      .profile-summary,
+      .profile-readings,
+      .profile-aside {
+        grid-template-columns: 1fr;
+      }
+
+      .nine-color-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .trait-card .chips {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .facts-grid {
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+      }
+
+      .fact strong {
+        font-size: clamp(20px, 6vw, 28px);
+      }
+
+      .number-mark {
+        min-height: 260px;
+        border-radius: 22px;
+      }
+      .number-mark::before {
+        width: 190px;
+        height: 190px;
+      }
+      .number-mark > div {
+        min-height: 210px;
+      }
+      .number-mark strong { font-size: 116px; }
+    }
+
+    @media print {
+      body,
+      .report {
+        background: white;
+      }
+      body::before,
+      body::after,
+      .hero {
+        display: none;
+      }
+      .report {
+        display: block;
+      }
+      .report-inner {
+        width: 100%;
+        padding: 0;
+      }
+      .section {
+        break-inside: avoid;
+        padding: 18px 0;
+      }
+      .card,
+      .fact,
+      .reading-box,
+      .closing {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">生日小測驗</p>
+          <h1>生涯運數解密</h1>
+          <p class="hero-copy">從生日探索你的天賦、關係與人生節奏。</p>
+          <div class="hero-pills" aria-label="測驗重點">
+            <span class="hero-pill">輸入生日</span>
+            <span class="hero-pill">看見天賦</span>
+            <span class="hero-pill">找到節奏</span>
+          </div>
+        </div>
+
+        <section class="entry-panel" aria-label="生日輸入">
+          <label for="birthdate">請輸入西元出生年月日</label>
+          <div class="date-row">
+            <input id="birthdate" type="text" inputmode="numeric" autocomplete="off" placeholder="yyyy/mm/dd" aria-describedby="errorMessage">
+            <button class="primary-button" id="startButton" type="button">開始解析你的生涯運數</button>
+          </div>
+          <p class="hint">本解析作為自我探索與生涯思考參考，協助你更理解自己的特質與節奏。</p>
+          <p class="error" id="errorMessage" role="alert"></p>
+        </section>
+      </div>
+    </header>
+
+    <main class="report" id="report" aria-live="polite">
+      <div class="report-inner">
+        <section class="section reveal-section" id="destinySection"></section>
+        <section class="section reveal-section" id="trinitySection"></section>
+        <section class="section reveal-section" id="profileSection"></section>
+        <section class="section reveal-section" id="comboSection"></section>
+        <section class="section reveal-section" id="nineColorSection"></section>
+        <section class="section reveal-section" id="closingSection"></section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    window.LIFE_PATH_DATA = {
+      "calculation_spec": [
+        {
+          "item": "輸入欄位",
+          "rule": "西元年、月份、日期",
+          "note": "月份與日期需補成兩位數，例如 6 月 = 06。"
+        },
+        {
+          "item": "生辰數",
+          "rule": "YYYYMMDD",
+          "note": "將西元年月日合併成 8 位數。例：1972/06/19 → 19720619。"
+        },
+        {
+          "item": "天賦數",
+          "rule": "生辰數每一位數字相加",
+          "note": "例：1+9+7+2+0+6+1+9=35。"
+        },
+        {
+          "item": "生涯運數",
+          "rule": "天賦數各位數繼續加總至一位數",
+          "note": "例：35 → 3+5=8；29 → 2+9=11 → 1+1=2。"
+        },
+        {
+          "item": "組合類型",
+          "rule": "天賦數/生涯運數",
+          "note": "例：35/8、29/11/2。若天賦數有中間數，可顯示完整推導。"
+        },
+        {
+          "item": "三層解析",
+          "rule": "天賦數前位=外在表徵；天賦數後位=內在思維；生涯運數=核心價值",
+          "note": "對應身/心/靈：能做、想做、愛做/可長久做。"
+        },
+        {
+          "item": "結果顯示順序",
+          "rule": "數字組合 → 三層解析 → 生涯運數解析 → 天賦組合解析 → 免責提醒",
+          "note": "第一版先做到可測試、手機好讀。"
+        }
+      ],
+      "numbers": [
+        {
+          "number": 1,
+          "title": "創造與自信",
+          "meaning": "創造、自信、領導與開創",
+          "traits": "獨立；自主；有自信；創新；主觀；愛面子",
+          "color": "紅色",
+          "weakness_original": "好高騖遠、一步登天",
+          "weakness_public": "目標感強，但要避免急於求成或過度期待一步到位。",
+          "work_practice": "穩中求勝",
+          "advice": "真正的領導者，是會關心追隨者的需求與生活。",
+          "description_original": "獨行俠、掌控慾強、害怕失控、能夠創新並加以改良以開枝散葉，對人對事易主觀並留下刻板印象。愛面子，會搶著付帳。達成目標後，並不會停止追求成功。",
+          "description_public": "具備開創力與主導性，喜歡掌握方向，也重視自我表現與成果。發揮得好時，能帶領他人看見新可能；需要留意過度主觀或把壓力都放在自己身上。",
+          "money_view": "不喜歡零散、不穩定的收入，偏好穩定且大量進帳。理財時較相信自己的判斷，可能自創方法，也容易因賺得多而花得多。",
+          "sales_advice": "可強調名人見證、品質、用料材質與高價值感；溝通時多肯定對方判斷，重點清楚。",
+          "recruit_advice": "談投資報酬率、未來願景、獲利模式；講話需直接、有重點。",
+          "life_view": "實現理想，愛拼才會贏。",
+          "work_view": "掌握權力、迎接掌聲、追求成功巔峰。",
+          "relationship_view": "敢愛敢恨、愛恨分明，主控、主動，志在必得。",
+          "energy_usage": "需要動力、靈感、下決定、增強活力、發想 idea、做決策時。",
+          "celebrities": "拿破崙、華盛頓、王永慶"
+        },
+        {
+          "number": 2,
+          "title": "合作與協調",
+          "meaning": "合作、協調、整合與安全感",
+          "traits": "協調；整合；可合夥；分工；合作；重細節",
+          "color": "橙色（銀、灰）",
+          "weakness_original": "懶惰、意志力不強、耳根軟",
+          "weakness_public": "容易受他人影響，做決定時需要更明快與堅定。",
+          "work_practice": "讓自己很忙",
+          "advice": "一個明快的決定，勝過十個拖泥帶水的考量。",
+          "description_original": "先衰後盛、越老越俏。最忠心，可合夥並不易拆夥。身為合夥人，可做到只出錢不管事。出師字輩的人最多，需有系統協助，容易培養出有形的專業。有偏財運。情緒容易積忍大爆發。為情為人易優柔寡斷，下不了正確的決定。固執，勇於認錯絕不改過。少年得志中年垮台者，不容易東山再起。",
+          "description_public": "重視合作、安全感與穩定關係，適合在清楚的系統與分工中發揮。對人忠誠，能成為可靠的夥伴；需要留意優柔寡斷、情緒累積與過度配合他人。",
+          "money_view": "只要配合得好，可有多元進帳。理財不喜歡一個人承擔，常與合夥或合作有關。重視安全性，但也可能因猶豫錯失機會。",
+          "sales_advice": "重視專業與資歷，避免讓對方覺得不安全；可用划算感、完整服務與穩定保障切入。",
+          "recruit_advice": "談系統、團隊、步驟，強調照步驟做就能上手。",
+          "life_view": "人生充滿不安全感，追求安全保障。",
+          "work_view": "跟隨認同的領導人，透過分工合作完成目標。",
+          "relationship_view": "互相支持配合、忠誠互補、責任劃分。",
+          "energy_usage": "需要耐性、改善人際關係、改善愛情、找門路、需要協調時。",
+          "celebrities": "柯林頓、雷根、蘇貞昌、許文龍、貝克漢、李敖"
+        },
+        {
+          "number": 3,
+          "title": "溝通與靈敏",
+          "meaning": "溝通、創意、表達與靈活應變",
+          "traits": "機智；溝通；多才藝；創意；樂觀；孩子氣",
+          "color": "男：鮮黃色；女：鵝黃色",
+          "weakness_original": "大起大落，年輕摸大錢很危險。奮鬥至35歲後再創業可。",
+          "weakness_public": "創意與變化強，但需要累積穩定基礎，避免過早追求高風險突破。",
+          "work_practice": "吃苦當吃補",
+          "advice": "世上絕無真完美，珍惜眼前所有。",
+          "description_original": "聰明外顯，機靈、隨機應變見招拆招。說服力強。創意鬼點子多，但需有幕僚協助執行。無可救藥的樂觀，受傷會自我療傷並很快復原。很盧很番，不可理喻。永遠覺得下一個會更好，易朝三暮四。為了怕認錯、怕被罵，逃避不面對。天賦數前數為3者，外表較不顯老。",
+          "description_public": "反應快、表達力好，擅長溝通、創意與危機處理。具備樂觀復原力，容易帶動氣氛；需要留意執行落差、三分鐘熱度或逃避壓力。",
+          "money_view": "容易因靈光一閃而決定，喜歡短時間取得成果，也喜歡新的投資機會。需留意把期待當成事實。",
+          "sales_advice": "重視新鮮感與特殊待遇；可設計獎勵或推薦回饋，避免讓對方覺得落於人後。",
+          "recruit_advice": "談未來、舞台、理念與對他的重視，並提供特別福利或表現空間。",
+          "life_view": "人生像舞會，一切跟著感覺走。",
+          "work_view": "團隊合作、危機處理，痛恨刻板。",
+          "relationship_view": "真誠溝通、緊密無距離，喜歡浪漫氣氛，但可能期待較多。",
+          "energy_usage": "需要創意、帶活動、做公關、市場行銷時。",
+          "celebrities": "星雲法師、成龍、王貞治、鄧麗君"
+        },
+        {
+          "number": 4,
+          "title": "穩定與執行",
+          "meaning": "穩定、執行、責任與專業",
+          "traits": "穩健；執行；負責任；愛家；固執；專業精",
+          "color": "綠色（咖啡、棕色）",
+          "weakness_original": "雜亂、混亂。",
+          "weakness_public": "需要清楚秩序與穩定架構，面對混亂環境容易耗能。",
+          "work_practice": "勿落入勾心鬥角、內部鬥爭。",
+          "advice": "不勇於冒險嘗試，就不可能真正成長。",
+          "description_original": "外表較老成、冷酷。不願說出心裡話。一切努力都是為了家庭。固執第一名。容易成就無形的專業，邏輯性強。不能陷入三角戀，將無法收尾無法全身而退。賺到舒服錢，就不再向前。",
+          "description_public": "踏實、負責、重視家庭與安全感，適合累積專業與長期信任。邏輯清楚、執行力強；需要留意過度固執、情緒不表達，或因安逸而停下成長。",
+          "money_view": "重視專注、穩定與安全，不喜歡太投機。喜歡存摺有餘裕的感覺，偶爾會有貪心念頭，但通常仍回到保守。",
+          "sales_advice": "強調服務品質、業界年資、利弊分析與同行比較；白紙黑字、家庭訴求很重要。",
+          "recruit_advice": "談為家庭而戰、公司福利、穩定制度與證照安全感。",
+          "life_view": "堅守本分、重情感、追求圓滿。",
+          "work_view": "和諧、穩定、有秩序的工作環境最重要。",
+          "relationship_view": "感情穩定發展如同家人，雙方都要對感情負責。",
+          "energy_usage": "需要安全感、釐清問題、理財時。",
+          "celebrities": "比爾蓋茲、嚴凱泰、張忠謀、李遠哲、王偉忠、蔡康永"
+        },
+        {
+          "number": 5,
+          "title": "自由與表達",
+          "meaning": "自由、社交、表達與冒險",
+          "traits": "社交；求知；表達強；積極；自由；愛冒險",
+          "color": "天藍色（土黃色）",
+          "weakness_original": "周遭人際失和、眾叛親離",
+          "weakness_public": "重視自由與自我表達，但要留意人際界線與關係經營。",
+          "work_practice": "勿找藉口與理由",
+          "advice": "人生除了快樂之外，還有責任與犧牲。",
+          "description_original": "跟任何人都能交朋友。探人隱私。講話時手舞足蹈唱作俱佳。搧動力強。喜歡新事物。暫時性失憶症最嚴重。較重視自己，不會怕傷害到別人。",
+          "description_public": "社交力強、表達生動，喜歡新鮮事物與自由彈性，能快速與人建立互動。發揮得好時很有感染力；需要留意承諾、責任與人際分寸。",
+          "money_view": "容易受內線或小道消息吸引，喜歡多樣化投資，賭性較強。花錢看爽度，可能提前慶祝。",
+          "sales_advice": "強調知名品牌、曝光、廣告、名人見證；多讚美，讓對方多說。",
+          "recruit_advice": "提供舞台與分享空間，強調其他事由團隊支援，工作需有彈性。",
+          "life_view": "跳脫束縛、分享經驗。",
+          "work_view": "與人分享、溝通，並且自由自在。",
+          "relationship_view": "自由、開放、熱情，喜歡新鮮刺激與挑戰，但可能害怕承諾。",
+          "energy_usage": "想要表達演講、銷售、展現社交手腕、聽人說話、受人歡迎時。",
+          "celebrities": "毛澤東、希特勒、梵谷、高清愿、林肯、張藝謀"
+        },
+        {
+          "number": 6,
+          "title": "關懷與接納",
+          "meaning": "關懷、奉獻、和諧與支持",
+          "traits": "奉獻；助人；求完美；和諧；安撫；重情義",
+          "color": "深藍色",
+          "weakness_original": "無根、漂泊、找不到定位",
+          "weakness_public": "容易為他人付出，需要建立自己的定位與界線。",
+          "work_practice": "主管應學習先嚴後鬆",
+          "advice": "先解決自己的問題，再解決別人的。",
+          "description_original": "宗教緣份很強。吃軟不吃硬，只要開口一定幫忙。做事要求完美。喜歡和諧不喜衝突，會議中不喜當場開砲。具輔導治療功能，但無法解決自己的問題。容易為情所困。宰相格，不適合做老闆。細膩、敏銳度強。不會也不愛開口求助。跟熟人在一起會展現I特質，談到專業則展現D特質。",
+          "description_public": "溫暖、重情義、願意支持他人，也具備敏銳觀察與專業要求。適合陪伴、輔導、服務與整合型角色；需要留意過度承擔、完美主義與不善求助。",
+          "money_view": "投資理財常聽身邊人的意見，但不一定聽專家。容易為了支持朋友而投入，需避免隨波逐流。",
+          "sales_advice": "可從交情、內行選擇與請對方幫忙切入；訴諸情感與信任。",
+          "recruit_advice": "三顧茅廬、訴之以情，談理念、交情與全力相挺。",
+          "life_view": "以服務為目的。",
+          "work_view": "敬業樂群、體貼員工，也可能成為嚴格主管。",
+          "relationship_view": "熱情、有耐心、體貼奉獻，但掌控慾強，不能被甩。",
+          "energy_usage": "想要為人解決問題、修東西、改善愛情、要別人重視你、擔責任時。",
+          "celebrities": "愛迪生、愛因斯坦、哥倫布、梁朝偉、郭台銘"
+        },
+        {
+          "number": 7,
+          "title": "真實與謹慎",
+          "meaning": "理性、分析、真實與謹慎",
+          "traits": "理性；內斂；求真理；敏銳；真摯；好分析",
+          "color": "紫色",
+          "weakness_original": "光想不做",
+          "weakness_public": "思考力強，但需要透過明確節奏與外部監督推動行動。",
+          "work_practice": "需被監督",
+          "advice": "接受事實的真相，面對它、解決它。",
+          "description_original": "不容易牽動情緒、重隱私、很龜毛。喜怒哀樂不形於色。生活富足不缺錢時，會尋求宗教慰藉。防禦性高。與人互不佔便宜。利弊得失善分析。邏輯分析力強，超會套話。專業遭攻擊時，D特質顯現。喜歡聚少離多的感情。",
+          "description_public": "理性、內斂、重視真相與專業，善於分析與判斷利弊。防禦性較高，對隱私與界線敏感；需要留意想太多、行動慢或不易表達情緒。",
+          "money_view": "對理財有興趣，重視投資報酬率與分析，但容易因猶豫錯失良機。可忍得住不花錢，決定後則很明確。",
+          "sales_advice": "強調品牌形象、用料材質與專業證據，避免過度套交情。",
+          "recruit_advice": "談系統、投資報酬率、比較表、數據與可行方法；用道理溝通。",
+          "life_view": "剷奸除惡、為人謀福利。",
+          "work_view": "對於權力，要全力以赴追求。",
+          "relationship_view": "追求純潔唯一真愛，初期細心體貼，但可能有強烈嫉妒心。",
+          "energy_usage": "想要分析、檢查、審視、考核、調查、歸納、整理時。",
+          "celebrities": "周潤發、李小龍、李安、貝多芬、邱吉爾"
+        },
+        {
+          "number": 8,
+          "title": "豐足與權力",
+          "meaning": "豐足、權力、務實與主導",
+          "traits": "率直；主控；肯行動；務實；認真；有遠見",
+          "color": "粉紅色",
+          "weakness_original": "固執己見，不改變",
+          "weakness_public": "意志堅定，但需要保持彈性與自我覺察。",
+          "work_practice": "得到權力，更要學習內省",
+          "advice": "對自己誠實，也對別人誠實。",
+          "description_original": "主導一切掌控性強。自動自發，要知道授權權限在哪。務實認真。看遠不看近，可吃苦。立定目標努力達成，一旦達成就不再有往前衝的動力。沒有權力客客氣氣，一旦掌權則成暴君。機關算盡無所不用其極。",
+          "description_public": "務實、有行動力，擅長掌握方向與資源配置，具備遠見與承擔大局的能力。發揮得好時能帶領團隊走向成果；需要留意過度主控、授權不足或達標後失去動力。",
+          "money_view": "理財重視掌控與規劃，對人與管道都要信任。決定快速，講求效率與效能，也重視資金能靈活運用。",
+          "sales_advice": "重視業務員形象、品牌大小與試用體驗；溝通要精簡有重點。",
+          "recruit_advice": "談投資報酬率、利潤、市場、格局與 know-how。",
+          "life_view": "穩健踏實、永續經營。",
+          "work_view": "投入更多精力追求成功，但一旦滿足就可能喪失動力。",
+          "relationship_view": "重視主控權與規則，佔有慾較強，需要學習尊重對方界線。",
+          "energy_usage": "想要做領袖、主導、成為企業主、處理大問題、開闢財源、從政時。",
+          "celebrities": "國父、張榮發、馬英九、畢卡索、劉德華"
+        },
+        {
+          "number": 9,
+          "title": "正直與智慧",
+          "meaning": "正直、智慧、慈悲與理想",
+          "traits": "慈悲；執著；塑性高；空想；付出；重人本",
+          "color": "金黃色",
+          "weakness_original": "沈迷於某項人、事、物",
+          "weakness_public": "理想與投入感強，需要避免過度沉迷或與現實脫節。",
+          "work_practice": "",
+          "advice": "做夢之前先醒來，要多聽別人專業的建議，你的夢想將更容易達成。",
+          "description_original": "易沈迷，有收集東西僻好。變色龍，容易人生迷網。要做自己有興趣的事，才能出人頭地。愛強出頭。吸收能力佳，悟性佳。",
+          "description_public": "具有理想、同理與吸收力，適合投入有意義、有興趣或能幫助他人的事情。可塑性高、悟性佳；需要留意理想過高、執行不足或沉迷於某些人事物。",
+          "money_view": "對理財觀念較夢幻不實際，可能有很多計畫但執行力不足。憑感覺理財時，結果容易與現實有落差，務實很重要。",
+          "sales_advice": "可運用名人見證、真誠老實銷售法與交情建立信任。",
+          "recruit_advice": "談理念、使命與理想。",
+          "life_view": "喜歡平淡而充實的生活。",
+          "work_view": "不喜歡朝九晚五及商場上血腥廝殺。",
+          "relationship_view": "夢幻、浪漫，現實與理想差異大；怕失敗，常有寂寞疏離感；合不來又分不開。",
+          "energy_usage": "想要運用想像力、帶給人決策、想放鬆、避免功利色彩、想要超然、想助人時。",
+          "celebrities": "證嚴法師、德雷莎、甘地、周杰倫"
+        }
+      ],
+      "talent_combinations": [
+        {
+          "talent_number": 10,
+          "path_number": 1,
+          "combo_label": "10/1",
+          "original_description": "最霸道的1，2000年以後才會出現。",
+          "public_description": "主導性與開創性很強，容易展現明確態度與決策力；需要留意溝通彈性。"
+        },
+        {
+          "talent_number": 19,
+          "path_number": 1,
+          "combo_label": "19/10/1",
+          "original_description": "最具雙重性格的1，矛盾、非常具領導魅力的1。比較愛幫助人的1，外表堅強、內心脆弱。",
+          "public_description": "具領導魅力與助人特質，外在堅強、內在敏感，容易在自我要求與照顧他人之間拉扯。"
+        },
+        {
+          "talent_number": 28,
+          "path_number": 1,
+          "combo_label": "28/10/1",
+          "original_description": "最好相處的1，外表最不像、外柔內剛。傳統保守有能力，最不愛面子的1。",
+          "public_description": "外在溫和、內在堅定，具能力但不一定高調，適合穩健推進與長期累積。"
+        },
+        {
+          "talent_number": 37,
+          "path_number": 1,
+          "combo_label": "37/10/1",
+          "original_description": "最適合做業務的1，對熟人容易失去尊重。最聰明的1，最會講話、才華洋溢。",
+          "public_description": "表達力與開創力強，適合業務、溝通與開發型工作；需留意對熟人的尊重與界線。"
+        },
+        {
+          "talent_number": 46,
+          "path_number": 1,
+          "combo_label": "46/10/1",
+          "original_description": "工作最勤奮的1，最會照顧人的1，最吃苦耐勞的1。對人情沒輒、對人際感情智障。",
+          "public_description": "勤奮、耐勞且照顧人，責任感強；需要在人情壓力與感情表達上更清楚柔軟。"
+        },
+        {
+          "talent_number": 11,
+          "path_number": 2,
+          "combo_label": "11/2",
+          "original_description": "外剛內柔，最不像2的2，喜歡照顧人的2，但卻怕被照顧。超級行動力、最具大將之才。",
+          "public_description": "外在有行動力，內在柔軟敏感，具照顧他人的能力，也需要學習接受支持。"
+        },
+        {
+          "talent_number": 20,
+          "path_number": 2,
+          "combo_label": "20/2",
+          "original_description": "最溫柔的2，2中極品、會吞忍，但是忍無可忍時發脾氣也很可怕。",
+          "public_description": "溫和、能忍讓，善於配合；需要留意情緒累積，適時表達需求。"
+        },
+        {
+          "talent_number": 29,
+          "path_number": 2,
+          "combo_label": "29/11/2",
+          "original_description": "外柔內剛，常常委屈自己做不喜歡的事，但氣在心裡。最肯為別人付出的2。",
+          "public_description": "外在配合度高、內在有原則，願意為他人付出；需要避免長期委屈自己。"
+        },
+        {
+          "talent_number": 38,
+          "path_number": 2,
+          "combo_label": "38/11/2",
+          "original_description": "最精明幹練的2，最不像2的2。有創意、又務實，不能久居人下，對熟人嘴不甜。",
+          "public_description": "兼具創意與務實，做事精明幹練，不適合長期被限制；需練習對熟人表達肯定。"
+        },
+        {
+          "talent_number": 47,
+          "path_number": 2,
+          "combo_label": "47/11/2",
+          "original_description": "最會理財的2，最會鑽研的2，最小氣的2也是最有錢的2。自動自發型，是人才也是人財。",
+          "public_description": "善於鑽研與理財，能自動自發累積成果；需留意過度防守或對資源太緊繃。"
+        },
+        {
+          "talent_number": 12,
+          "path_number": 3,
+          "combo_label": "12/3",
+          "original_description": "最才華洋溢的3，最有創造力的3，在外很厲害，對內不愛說話，較為老成。",
+          "public_description": "才華與創造力明顯，外在表現亮眼，私下較沉穩，需要找到穩定輸出舞台。"
+        },
+        {
+          "talent_number": 21,
+          "path_number": 3,
+          "combo_label": "21/3",
+          "original_description": "人際關係有嚴重問題，只想別人瞭解他，卻不想瞭解別人。外柔內剛。",
+          "public_description": "外在柔和、內在堅定，渴望被理解；需要練習同理他人與雙向溝通。"
+        },
+        {
+          "talent_number": 30,
+          "path_number": 3,
+          "combo_label": "30/3",
+          "original_description": "最幼稚、最孩子氣的3。最理想主義的3。愛畫大餅、逃避因子重，不是英雄就是梟雄。",
+          "public_description": "理想感與童心強，擅長想像與帶動氣氛；需要把想法落地，避免只停留在願景。"
+        },
+        {
+          "talent_number": 39,
+          "path_number": 3,
+          "combo_label": "39/12/3",
+          "original_description": "悟性最強的3，最理想主義的3，最成熟的3，最不切實際的3。",
+          "public_description": "悟性與理想性很強，能看見大方向；需要用務實步驟承接想像力。"
+        },
+        {
+          "talent_number": 48,
+          "path_number": 3,
+          "combo_label": "48/12/3",
+          "original_description": "最有power、最有領導氣質的3。",
+          "public_description": "具表達力、領導氣質與行動能量，適合帶動團隊與專案；需要聚焦重點。"
+        },
+        {
+          "talent_number": 4,
+          "path_number": 4,
+          "combo_label": "4/4",
+          "original_description": "工作領域的權威，只要發願學習就能出師。純4。",
+          "public_description": "具備純粹的執行與專業累積能力，一旦投入學習，容易成為領域中可靠的人。"
+        },
+        {
+          "talent_number": 13,
+          "path_number": 4,
+          "combo_label": "13/4",
+          "original_description": "外表獨立，內在理想主義。最有創意的4，最不合群的4。",
+          "public_description": "兼具獨立與創意，能用自己的方法建立專業；需要留意與團隊的協作感。"
+        },
+        {
+          "talent_number": 22,
+          "path_number": 4,
+          "combo_label": "22/4",
+          "original_description": "最會協調執行的4，最帶感情的4，最目標導向的4。管理能力好。",
+          "public_description": "協調、執行與管理能力佳，能兼顧目標與人情，是穩定推進任務的組合。"
+        },
+        {
+          "talent_number": 31,
+          "path_number": 4,
+          "combo_label": "31/4",
+          "original_description": "外在聰明，內心堅強，只要答應就會做到。最有才藝的4，外在態度很好，內在頑固。",
+          "public_description": "外在聰明好相處，內在堅定負責；承諾後會努力完成，需留意過度固執。"
+        },
+        {
+          "talent_number": 40,
+          "path_number": 4,
+          "combo_label": "40/4",
+          "original_description": "最能就事論事的4，最偏激、不輕易妥協，最沒心眼的4，最怕複雜的4。",
+          "public_description": "重視事實與原則，喜歡單純清楚的環境；需要培養彈性與複雜情境處理力。"
+        },
+        {
+          "talent_number": 5,
+          "path_number": 5,
+          "combo_label": "5/5",
+          "original_description": "聰明、反應靈敏，對外在環境敏感、具特殊魅力。不夠冷靜，自以為是，不易接受別人的意見。",
+          "public_description": "反應快、魅力強、環境敏感度高；需要冷靜判斷並練習聽取他人意見。"
+        },
+        {
+          "talent_number": 14,
+          "path_number": 5,
+          "combo_label": "14/5",
+          "original_description": "最保守的5，最不愛現的5。",
+          "public_description": "自由感中帶有保守與穩定，表達不一定高調，但仍重視彈性與自主。"
+        },
+        {
+          "talent_number": 23,
+          "path_number": 5,
+          "combo_label": "23/5",
+          "original_description": "外表和善，但少根筋。野心大、好勝心強。太注重自我形象，感情易受傷。",
+          "public_description": "外在和善、內在好勝，重視形象與表現；需要提升細節敏感度與情緒復原力。"
+        },
+        {
+          "talent_number": 32,
+          "path_number": 5,
+          "combo_label": "32/5",
+          "original_description": "男人會讓女人流淚，女人會讓男人搖頭的5。表達力好，最感情用事的5，異性緣好。",
+          "public_description": "表達力與魅力強，感情感受豐富；需要在關係中保持穩定與成熟溝通。"
+        },
+        {
+          "talent_number": 41,
+          "path_number": 5,
+          "combo_label": "41/5",
+          "original_description": "外表沈穩、內在獨立，整體熱情，愛管別人，不愛被管。",
+          "public_description": "外在穩、內在自由獨立，熱情且有主見；需要拿捏管人與被管之間的界線。"
+        },
+        {
+          "talent_number": 6,
+          "path_number": 6,
+          "combo_label": "6/6",
+          "original_description": "最浪漫、最感性的6，對愛情十分認真和投入。熱情大方非常容易受歡迎，但內心缺乏安全感。",
+          "public_description": "感性、熱情、重視愛與關係，容易受歡迎；需要建立內在安全感與自我定位。"
+        },
+        {
+          "talent_number": 15,
+          "path_number": 6,
+          "combo_label": "15/6",
+          "original_description": "最陽光形象的6，最獨行俠的6。",
+          "public_description": "外在陽光、有吸引力，也保有獨立性；適合用溫暖形象帶動他人。"
+        },
+        {
+          "talent_number": 24,
+          "path_number": 6,
+          "combo_label": "24/6",
+          "original_description": "和善、人際關係好，交友洋溢、不會拒絕。濫好人、人脈很多，沒正義感。",
+          "public_description": "和善、人緣好、朋友多，願意配合；需要學會拒絕與建立原則。"
+        },
+        {
+          "talent_number": 33,
+          "path_number": 6,
+          "combo_label": "33/6",
+          "original_description": "口才極佳、學習能力好，太愛擔責任。做事求完美，容易沒有注意到效率。",
+          "public_description": "口才與學習力佳，願意承擔與追求完美；需要兼顧效率與界線。"
+        },
+        {
+          "talent_number": 42,
+          "path_number": 6,
+          "combo_label": "42/6",
+          "original_description": "最委屈求全的6、最有同情心的6，有心事不會說出口。跟他借錢一定會借，最感情用事的6。",
+          "public_description": "同情心強、願意成全他人，情感細膩；需要學會說出心事與保護資源。"
+        },
+        {
+          "talent_number": 7,
+          "path_number": 7,
+          "combo_label": "7/7",
+          "original_description": "有豐富的夢想和想法，並且能夠付諸實現。行事謹慎、有計劃、善於理財。",
+          "public_description": "想法豐富且能規劃落地，謹慎、有計畫，適合分析、理財與長期布局。"
+        },
+        {
+          "talent_number": 16,
+          "path_number": 7,
+          "combo_label": "16/7",
+          "original_description": "做事堅強，但感情最軟弱的7。",
+          "public_description": "做事堅定理性，但感情面較敏感，需要在關係中學習安全感與表達。"
+        },
+        {
+          "talent_number": 25,
+          "path_number": 7,
+          "combo_label": "25/7",
+          "original_description": "最圓融的7，言之有物，說話好聽，職場寵兒。",
+          "public_description": "理性中帶圓融，溝通有內容且讓人舒服，容易在職場獲得信任。"
+        },
+        {
+          "talent_number": 34,
+          "path_number": 7,
+          "combo_label": "34/7",
+          "original_description": "最開朗的7，不愛承擔責任跟風險，外表最不像7。",
+          "public_description": "比一般7更開朗外放，適合溝通與創意分析；需要提升承擔與風險面對能力。"
+        },
+        {
+          "talent_number": 43,
+          "path_number": 7,
+          "combo_label": "43/7",
+          "original_description": "最腳踏實地的7，不是真心想要時就容易半途而廢。",
+          "public_description": "務實、分析力與執行力兼具；需要確認真正想要的目標，避免半途而廢。"
+        },
+        {
+          "talent_number": 8,
+          "path_number": 8,
+          "combo_label": "8/8",
+          "original_description": "有很大野心，清楚了解自己追求的目標。內向、實在、敏感，追求高享受的物質生活。",
+          "public_description": "目標明確、野心與務實並存，重視成果與生活品質；需要平衡敏感與壓力。"
+        },
+        {
+          "talent_number": 17,
+          "path_number": 8,
+          "combo_label": "17/8",
+          "original_description": "最具領導氣質的8，但很多事情總差臨門一腳。",
+          "public_description": "具領導氣質與判斷力，適合主導方向；需要強化收尾與臨門一腳的執行。"
+        },
+        {
+          "talent_number": 26,
+          "path_number": 8,
+          "combo_label": "26/8",
+          "original_description": "最感情的8，人際關係最好的8，外表和善，人生以服務為目的。最不想當老闆的8。",
+          "public_description": "兼具主導力與服務精神，人際關係佳，適合帶人與照顧團隊，不一定追求個人掌權。"
+        },
+        {
+          "talent_number": 35,
+          "path_number": 8,
+          "combo_label": "35/8",
+          "original_description": "TOP SALES，最理想主義的8，雜務多、最容易跳tone的8。",
+          "public_description": "具備高度業務潛力與表達行動力，擅長用理想帶動成果；需要聚焦目標，避免同時承擔太多。"
+        },
+        {
+          "talent_number": 44,
+          "path_number": 8,
+          "combo_label": "44/8",
+          "original_description": "超級造夢機，適合做企劃，會在錯的地方找對的答案。感情面不夠，提案的餅王。",
+          "public_description": "企劃力與造夢能力強，能提出大格局想法；需要加強現實驗證與情感連結。"
+        },
+        {
+          "talent_number": 9,
+          "path_number": 9,
+          "combo_label": "9/9",
+          "original_description": "熱情、衝動，具有道德勇氣。喜歡主持正義，為弱勢團體仗義執言。具教導能力，常為人指點迷津。",
+          "public_description": "熱情、有正義感，具教導與啟發能力，適合幫助他人；需要避免衝動或過度介入。"
+        },
+        {
+          "talent_number": 18,
+          "path_number": 9,
+          "combo_label": "18/9",
+          "original_description": "最不想、也最不容易被瞭解的9，做任何事都會先佈局。",
+          "public_description": "內在複雜且具布局能力，不容易被看透；適合策略規劃，但需提升透明溝通。"
+        },
+        {
+          "talent_number": 27,
+          "path_number": 9,
+          "combo_label": "27/9",
+          "original_description": "表裡不一，外表和善但內心犯嘀咕。對事矛盾，心腸好。",
+          "public_description": "外在和善、內在思考多，心腸柔軟但容易矛盾；需要練習坦率表達。"
+        },
+        {
+          "talent_number": 36,
+          "path_number": 9,
+          "combo_label": "36/9",
+          "original_description": "學習吸收力最好的9，愛恨分明，好口才愛表達。要學會內斂，悟性最高的9，愛幫助人。",
+          "public_description": "吸收力與悟性強，口才好、樂於助人；需要學習內斂與情緒平衡。"
+        },
+        {
+          "talent_number": 45,
+          "path_number": 9,
+          "combo_label": "45/9",
+          "original_description": "能力最好的9，不頑固能改變的9，理念不合或沒責任感就做不下去。理想主義者，容易高估自己。",
+          "public_description": "能力強、能調整，也重視理念與責任感；需要務實評估自己與目標。"
+        }
+      ],
+      "base_number_traits": [
+        {
+          "number": 1,
+          "base_trait": "外在/內在/核心可對應：創造、自信、主導、開創",
+          "energy_usage": "需要動力、靈感、決策、活力時可借用1的能量",
+          "color": "紅色"
+        },
+        {
+          "number": 2,
+          "base_trait": "合作、協調、分工、細節、安全感",
+          "energy_usage": "需要耐性、協調、人際改善、尋找門路時可借用2的能量",
+          "color": "橙色 / 銀 / 灰"
+        },
+        {
+          "number": 3,
+          "base_trait": "溝通、靈敏、創意、表達、樂觀",
+          "energy_usage": "需要創意、公關、活動、市場行銷時可借用3的能量",
+          "color": "鮮黃色 / 鵝黃色"
+        },
+        {
+          "number": 4,
+          "base_trait": "穩定、執行、責任、家庭、專業",
+          "energy_usage": "需要安全感、釐清問題、理財規劃時可借用4的能量",
+          "color": "綠色 / 咖啡 / 棕色"
+        },
+        {
+          "number": 5,
+          "base_trait": "自由、表達、社交、求知、冒險",
+          "energy_usage": "需要演講、銷售、社交、受歡迎時可借用5的能量",
+          "color": "天藍色 / 土黃色"
+        },
+        {
+          "number": 6,
+          "base_trait": "關懷、接納、奉獻、和諧、情義",
+          "energy_usage": "需要解決問題、改善關係、承擔責任時可借用6的能量",
+          "color": "深藍色"
+        },
+        {
+          "number": 7,
+          "base_trait": "真實、謹慎、理性、分析、求真",
+          "energy_usage": "需要分析、檢查、考核、調查、歸納時可借用7的能量",
+          "color": "紫色"
+        },
+        {
+          "number": 8,
+          "base_trait": "豐足、權力、主導、務實、遠見",
+          "energy_usage": "需要領導、主導、處理大問題、開闢財源時可借用8的能量",
+          "color": "粉紅色"
+        },
+        {
+          "number": 9,
+          "base_trait": "正直、智慧、慈悲、想像、付出",
+          "energy_usage": "需要想像力、放鬆、超然、助人時可借用9的能量",
+          "color": "金黃色"
+        }
+      ],
+      "disclaimer": "本解析依據生涯運數資料整理，作為自我探索、生涯思考與職場特質理解之參考，不作為絕對判斷，也不涉及醫療、投資或人生重大決策建議。"
+    };
+
+    const state = {
+      data: null,
+      revealIndex: 0
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+
+    const layerCopy = {
+      body: {
+        title: "外在表徵｜身",
+        role: "這是你給人的第一印象，也常是你最自然流露出的行為方式。"
+      },
+      mind: {
+        title: "內在思維｜心",
+        role: "這是你心裡真正重視的需求，會影響你做選擇與判斷的方式。"
+      },
+      spirit: {
+        title: "核心價值｜靈",
+        role: "這是你比較能長久投入的方向，也是支撐你往前走的深層力量。"
+      }
+    };
+
+    const trinityCopy = {
+      0: {
+        body: "你的外在能量帶有一種特殊的放大效果。0 不是空白，而是一面放大鏡——它會讓你身上另一個數字的特質更加鮮明。你給人的第一印象可能特別強烈，無論是氣場、親和力還是專業感，都比一般人更容易被注意到。",
+        mind: "你的內心住著一股很深的直覺力。0 出現在心的位置，代表你對事物的感知比一般人更敏銳，常常說不出為什麼，但就是能感覺到對或不對。這股力量在順境時會讓你的天賦加倍發揮，但也要留意在低潮時別讓情緒過度放大。",
+        spirit: "在你的生命深處，0 帶來的是一種極致的潛能。它會把你核心數字的力量推到最大值——順的時候特別順，挑戰來的時候也會特別有感。保持覺察與平衡，是你一輩子最重要的功課，也是你最強大的天賦。"
+      },
+      1: {
+        body: "你給人的第一印象是果斷、有主見、充滿自信。不管走進哪個場合，你自然會成為目光的焦點。別人感受到的你，是一個知道自己要什麼、敢衝敢闖的獨行俠。",
+        mind: "你內心深處需要掌控感。比起跟隨，你更想帶領；比起配合，你更想開創。你很在意面子，不允許自己在人前示弱。達成一個目標後也不會停下來，因為你永遠在追求下一座山頭。",
+        spirit: "你生命最深處的驅動力，是實現理想、創造屬於自己的路。不甘於平凡、不願只是複製別人的成功，你需要一個能從零開始打造的舞台，愛拼才會贏就是你的人生寫照。"
+      },
+      2: {
+        body: "你給人的第一印象是溫和、好相處、讓人放心。你不會搶風頭，卻是最懂得察言觀色、默契配合的人。你天生的協調整合能力，讓人覺得和你合作特別順。",
+        mind: "你的內心充滿不安全感。你需要穩固的關係、值得信任的夥伴，特別害怕衝突與不確定。為人為情容易優柔寡斷，常常因為太怕做錯決定而錯失良機。但只要認定了，你是最忠心的人。",
+        spirit: "驅動你一輩子的，是透過合作與分工創造成就。你不追求獨佔光環，而是在分工合作中找到自己的位置。先衰後盛、越老越俏，你的人生是越活越精彩的類型。"
+      },
+      3: {
+        body: "你給人的第一印象是聰明靈活、反應快、很會說話。你機靈、隨機應變，說服力強，在社交場合中往往是帶動氣氛的那個人。天賦數前數為 3 的人，外表通常比實際年齡顯年輕。",
+        mind: "你內心有源源不絕的創意和鬼點子想要表達。你是無可救藥的樂觀派，受了傷會自我療傷然後很快復原。但你也怕被罵、怕認錯，遇到棘手的問題時，第一反應常常是先逃避再說。",
+        spirit: "驅動你一輩子的，是用溝通與創意在世界上留下痕跡。你不喜歡沉悶、不甘於一成不變。人生對你來說像一場舞會，一切跟著感覺走，你需要一個讓靈感不斷流動的舞台。"
+      },
+      4: {
+        body: "你給人的第一印象是沉穩、可靠、有責任感，外表可能較為老成。你不是最搶眼的，卻是最讓人安心的存在。別人知道，交給你的事一定會被踏踏實實地完成。",
+        mind: "你內心最重視的是安全與秩序。你害怕雜亂與混亂，需要清楚的規則和目標。你不願說出心裡話，很多事情寧可自己扛。固執是你的另一面，一旦決定了，九頭牛也拉不回來。",
+        spirit: "驅動你一輩子的，是為身邊的人築起安穩的日子。你所有的努力，歸根結底都是為了家庭。堅守本份、追求圓滿，只要確定是對的路，你就會一步一步走到底。"
+      },
+      5: {
+        body: "你給人的第一印象是熱情、外向、充滿活力。你跟任何人都能交朋友，講話時手舞足蹈、唱作俱佳，很容易成為人群中最受歡迎的人。煽動力也特別強。",
+        mind: "你內心最在意的是自由。被約束、被控制會讓你極度不舒服。你渴望探索新事物、認識新朋友、嘗試沒走過的路。但你比較重視自己的感受，有時候顧不到別人的處境。",
+        spirit: "在你生命最深處，驅動你的是跳脫束縛、分享經歷。你要的是與人溝通分享、並且自由自在的人生。喜歡新鮮刺激，害怕一成不變，只要能自在表達，你就充滿能量。"
+      },
+      6: {
+        body: "你給人的第一印象是溫暖、體貼、值得信賴。你吃軟不吃硬，只要別人開口你就一定幫忙。細膩、敏銳度強，別人在你身邊會不自覺地想傾訴心事。",
+        mind: "你內心最在意的是和諧與完美。你不喜歡衝突，會議中不喜歡當場開砲，做事要求完美。你具備輔導治療的天賦，總能安撫別人，但矛盾的是，你自己的問題卻往往無法解決，而且不會也不愛開口求助。",
+        spirit: "驅動你一輩子的，是以服務為目的的使命感。你天生就想奉獻、想助人、想讓身邊的人都過得好。你是宰相格，不一定要當老闆，但在你的位置上，你會把每件事都做到盡善盡美。"
+      },
+      7: {
+        body: "你給人的第一印象是冷靜、內斂、不輕易表態。你喜怒哀樂不形於色，重視隱私，防禦性高。但一旦開口，往往言之有物、一針見血，讓人不敢小看。",
+        mind: "你內心最在意的是真實。你不喜歡表面功夫，不接受含糊其辭。邏輯分析力強，凡事都要把利弊得失理清楚才能安心往前走。沒辦法馬上下決定，需要時間思考，但有時也因此錯失良機。",
+        spirit: "驅動你一輩子的，是對真理的追求。你要把事情看透徹、分析到位，不容許含糊過關。這股追根究底的力量，讓你在專業領域裡成為最有深度的人。當專業被質疑時，你會展現出強勢的一面。"
+      },
+      8: {
+        body: "你給人的第一印象是有氣場、有企圖心、做事果斷。你走進一個空間，就算不說話，別人也能感受到你身上那股主導一切的力量。沒有權力時客客氣氣，一旦掌權則霸氣外露。",
+        mind: "你內心最在意的是掌控與效率。你不喜歡處於被動的位置，想要主導、想要決定、想要看到具體的成果。務實認真，喜歡聽重點、不喜歡複雜。一旦立定目標就全力以赴，但達成之後容易失去繼續向前的動力。",
+        spirit: "在你生命最深處，驅動你的是穩健踏實、永續經營的信念。你看遠不看近，能吃苦、肯投入，做事講求效率與效能。你需要一個夠大的舞台，才能把這股執行力完全釋放，得到權力之後，更要學習內省。"
+      },
+      9: {
+        body: "你給人的第一印象是包容、有悟性、適應力強。你像變色龍一樣能融入各種環境和人群，吸收能力佳、塑性高。但你也有愛強出頭的一面，看不過去的事情，你會忍不住跳出來主持公道。",
+        mind: "你內心最渴望的是做自己真正有興趣的事。你對理想很執著，夢想也很大，但執行力常常跟不上想像，想多做少是你需要留意的課題。如果一件事能幫助別人、符合你的信念，你就會特別願意投入。",
+        spirit: "驅動你一輩子的，是一份超越自我的正直與使命感。你有與生俱來的慈悲和悟性，具備教導能力，常常在不經意間為人指點迷津。你喜歡平淡而充實的生活，不愛商場廝殺，你在這個世界上，不只是為了自己。"
+      }
+    };
+
+    const talentComboLookup = {
+      "10/1": "最霸道的 1，西元 2000 年以後出生的人才會出現這個組合。",
+      "19/10/1": "最具雙重性格的 1，內心充滿矛盾，卻非常具有領導魅力。比較愛幫助人的 1，外表堅強、內心脆弱。",
+      "28/10/1": "最好相處的 1，外表最不像 1，外柔內剛。傳統保守但很有能力，是所有 1 裡面最不愛面子的。",
+      "37/10/1": "最適合做業務的 1，最聰明的 1，最會講話、才華洋溢。但對熟人容易失去尊重。",
+      "46/10/1": "工作最勤奮的 1，最會照顧人的 1，最吃苦耐勞的 1。但對人情世故比較不敏感，人際關係是他的罩門。",
+      "11/2": "外剛內柔，最不像 2 的 2。喜歡照顧人，但卻怕被照顧。超級行動力，最具大將之才。",
+      "20/2": "最溫柔的 2，2 中極品。平時會吞忍，但忍無可忍時發起脾氣也很可怕。",
+      "29/11/2": "外柔內剛，常常委屈自己做不喜歡的事，但氣都悶在心裡。最肯為別人付出的 2。",
+      "38/11/2": "最精明幹練的 2，也是最不像 2 的 2。有創意、又務實，不能久居人下，但對熟人嘴不甜。",
+      "47/11/2": "最會理財的 2，最會鑽研的 2，最小氣的 2——也是最有錢的 2。自動自發型，是人才也是人財。",
+      "12/3": "最才華洋溢的 3，最有創造力的 3。在外面很厲害，但回到家反而不愛說話，性格較為老成。",
+      "21/3": "外柔內剛，很希望別人能理解自己，但比較不擅長主動去瞭解別人。別看外表溫和，內心其實比誰都堅強。",
+      "30/3": "心裡永遠住著一個孩子，是所有 3 裡面最保有赤子之心的。最理想主義的 3，愛畫大餅、逃避因子重，不是英雄就是梟雄。",
+      "39/12/3": "悟性最強的 3，最成熟的 3，但也是最不切實際的 3。理想主義色彩濃厚。",
+      "48/12/3": "最有 power、最有領導氣質的 3。",
+      "4/4": "純 4。工作領域的權威，只要發願學習就能出師。",
+      "13/4": "外表獨立，內在理想主義。最有創意的 4，但也是最不合群的 4。",
+      "22/4": "最會協調執行的 4，最帶感情的 4，最目標導向的 4。管理能力特別好。",
+      "31/4": "外在聰明，內心堅強，只要答應了就一定會做到。最有才藝的 4，外在態度很好，但內在頑固。",
+      "40/4": "最能就事論事的 4，立場最鮮明、不輕易妥協。同時也是最沒心眼的 4，最怕複雜的 4。",
+      "5/5": "純 5。聰明、反應靈敏，對外在環境敏感，具有特殊魅力。很有自己的想法，不容易被說服，有時會因為太堅持己見而聽不進別人的意見。",
+      "14/5": "最保守的 5，最不愛現的 5。",
+      "23/5": "外表和善，想事情比較直來直往、不愛繞彎。野心大、好勝心強，太注重自我形象，感情上容易受傷。",
+      "32/5": "男人會讓女人流淚，女人會讓男人搖頭的 5。表達力好，最感情用事的 5，異性緣特別好。",
+      "41/5": "外表沉穩、內在獨立，整體散發熱情。愛管別人，但不愛被管。",
+      "6/6": "純 6。最浪漫、最感性的 6，對愛情十分認真和投入。熱情大方、非常容易受歡迎，但內心缺乏安全感。",
+      "15/6": "最陽光形象的 6，最獨行俠的 6。",
+      "24/6": "和善到不會拒絕別人，交友廣泛、人脈很多，是大家都想找的那個人。",
+      "33/6": "口才極佳、學習能力好，太愛擔責任。做事求完美，但容易只顧品質而忽略了效率。",
+      "42/6": "最委屈求全的 6，最有同情心的 6，有心事不會說出口。跟他借錢一定會借，最感情用事的 6。",
+      "7/7": "純 7。有豐富的夢想和想法，並且能夠付諸實現。行事謹慎、有計劃、善於理財。",
+      "16/7": "做事堅強，但感情是最軟弱的 7。",
+      "25/7": "最圓融的 7，言之有物，說話好聽，是職場寵兒。",
+      "34/7": "最開朗的 7，不愛承擔責任跟風險，外表最不像 7。",
+      "43/7": "最腳踏實地的 7，但不是真心想要的事情就容易半途而廢。",
+      "8/8": "純 8。有很大的野心，清楚了解自己追求的目標。內向、實在、敏感，追求高享受的物質生活。",
+      "17/8": "最具領導氣質的 8，但很多事情總差臨門一腳。",
+      "26/8": "最感性的 8，人際關係最好的 8，外表和善，人生以服務為目的。最不想當老闆的 8。",
+      "35/8": "TOP SALES，最理想主義的 8。雜務多、最容易跳 tone 的 8。",
+      "44/8": "超級造夢機，適合做企劃，會在錯的地方找對的答案。理性大於感性，是提案界的餅王。",
+      "9/9": "純 9。熱情、衝動，具有道德勇氣。喜歡主持正義，會為弱勢團體仗義執言。具教導能力，常為人指點迷津。",
+      "18/9": "最不想、也最不容易被瞭解的 9。做任何事都會先佈局。",
+      "27/9": "外表和善，但內心有自己的小劇場，對事情常感到矛盾。不過心腸是真的好。",
+      "36/9": "學習吸收力最好的 9，愛恨分明，好口才又愛表達。悟性最高的 9，愛幫助人，但要學會適度內斂。",
+      "45/9": "能力最好的 9，不頑固、願意改變的 9。但理念不合或覺得沒責任感的事就做不下去。理想主義者，容易高估自己。"
+    };
+
+    const lifePathLookup = {
+      1: {
+        title: "創造與自信",
+        representative: "創造與自信",
+        traits: ["獨立", "自主", "有自信", "創新", "主觀", "愛面子"],
+        color: "紅色\n在重要場合、關鍵決定，或任何需要多一點底氣的時刻，試著穿戴這個顏色的衣物或配件，讓本命色為你加持。",
+        advice: "真正的領導者，是會關心追隨者的需求與生活。",
+        caution: [
+          "要特別留意：容易把目標訂太高、想一步到位",
+          "職場修煉：穩中求勝"
+        ],
+        description: [
+          "天生的獨行俠，喜歡掌握主導權，不太習慣把事情交給別人",
+          "有很強的創新能力，能把想法落地並不斷改良",
+          "對人對事容易有自己的定見，第一印象一旦形成就不太容易改變",
+          "為人豪爽，重視體面，朋友聚餐常常搶著買單",
+          "達成目標後不會停下來，會繼續追求下一個高峰"
+        ]
+      },
+      2: {
+        title: "合作與協調",
+        representative: "合作與協調",
+        traits: ["協調", "整合", "可合夥", "分工", "合作", "重細節"],
+        color: "橙色（銀、灰）\n在重要場合、關鍵決定，或任何需要多一點底氣的時刻，試著穿戴這個顏色的衣物或配件，讓本命色為你加持。",
+        advice: "一個明快的決定，勝過十個拖泥帶水的考量。",
+        caution: [
+          "要特別留意：容易安於現狀、意志力需要鍛鍊、容易受旁人意見影響",
+          "職場修煉：讓自己很忙"
+        ],
+        description: [
+          "越老越俏，屬於越活越精彩的類型",
+          "最忠心的夥伴，一旦合夥就不容易拆夥",
+          "身為合夥人，可以做到只出錢不管事",
+          "需要有系統的協助，在架構裡特別容易培養出專業",
+          "平時很能忍，但情緒一旦累積到極限，釋放出來的力道會讓人意外",
+          "面對感情或人際時容易猶豫，有時會錯過做決定的最佳時機",
+          "有點固執，就算知道自己不對，也很難馬上改過來"
+        ]
+      },
+      3: {
+        title: "溝通與靈敏",
+        representative: "溝通與靈敏",
+        traits: ["機智", "溝通", "多才藝", "創意", "樂觀", "孩子氣"],
+        color: "鮮黃色（女性為鵝黃色）\n在重要場合、關鍵決定，或任何需要多一點底氣的時刻，試著穿戴這個顏色的衣物或配件，讓本命色為你加持。",
+        advice: "世上絕無真完美，珍惜眼前所有。",
+        caution: [
+          "要特別留意：大起大落，年輕時摸大錢很危險，奮鬥至 35 歲後再創業較穩",
+          "職場修煉：吃苦當吃補"
+        ],
+        description: [
+          "聰明外顯，機靈、隨機應變、見招拆招",
+          "說服力強，很容易讓人點頭說好",
+          "創意和鬼點子很多，但需要有人幫忙把想法落地執行",
+          "天生樂觀派，受了傷會自我療傷，而且復原速度很快",
+          "一旦堅持起來非常執著，很難被說服",
+          "心裡總覺得下一個會更好，選擇太多時容易猶豫不定",
+          "有時候怕面對問題，會先選擇迴避"
+        ]
+      },
+      4: {
+        title: "穩定與執行",
+        representative: "穩定與執行",
+        traits: ["穩健", "執行", "負責任", "愛家", "固執", "專業精"],
+        color: "綠色（咖啡、棕色）\n在重要場合、關鍵決定，或任何需要多一點底氣的時刻，試著穿戴這個顏色的衣物或配件，讓本命色為你加持。",
+        advice: "不勇於冒險嚐試，就不可能真正成長。",
+        caution: [
+          "要特別留意：雜亂、混亂",
+          "職場修煉：勿落入勾心鬥角、內部鬥爭"
+        ],
+        description: [
+          "給人沉穩內斂的感覺，稍有距離感",
+          "心裡有很多想法，但不太習慣主動表達",
+          "一切努力的背後，最大的動力來自家庭",
+          "一旦決定了的事，很難改變，堅持度非常高",
+          "容易在專業領域裡成為權威，邏輯性強",
+          "達到一定成就後容易滿足，需要新的動力推自己往前"
+        ]
+      },
+      5: {
+        title: "自由與表達",
+        representative: "自由與表達",
+        traits: ["社交", "求知", "表達強", "積極", "自由", "愛冒險"],
+        color: "天藍色（土黃色）\n在重要場合、關鍵決定，或任何需要多一點底氣的時刻，試著穿戴這個顏色的衣物或配件，讓本命色為你加持。",
+        advice: "人生除了快樂之外，還有責任與犧牲。",
+        caution: [
+          "要特別留意：容易因為太做自己，而忽略了周遭的人際關係",
+          "職場修煉：勿找藉口與理由"
+        ],
+        description: [
+          "跟任何人都能交朋友，天生的社交高手",
+          "對別人的事情特別好奇，喜歡了解每個人的故事",
+          "講話時手舞足蹈、唱作俱佳，感染力很強",
+          "對新事物充滿熱情，喜歡嘗試不一樣的東西",
+          "記性有時候不太好，朋友會說你「選擇性記憶」",
+          "比較以自己的感受為優先，有時會忘了顧及旁人的感受"
+        ]
+      },
+      6: {
+        title: "關懷與接納",
+        representative: "關懷與接納",
+        traits: ["奉獻", "助人", "求完美", "和諧", "安撫", "重情義"],
+        color: "深藍色\n在重要場合、關鍵決定，或任何需要多一點底氣的時刻，試著穿戴這個顏色的衣物或配件，讓本命色為你加持。",
+        advice: "先解決自己的問題，再解決別人的。",
+        caution: [
+          "要特別留意：無根、漂泊、找不到定位",
+          "職場修煉：運數 6 的主管應學習先嚴後鬆"
+        ],
+        description: [
+          "吃軟不吃硬，別人只要開口，你一定幫忙",
+          "做事要求完美，細節都不放過",
+          "喜歡和諧的氛圍，不喜衝突，會議中不喜歡當場翻臉",
+          "天生具備安撫與輔導的天賦，但面對自己的問題時反而不知道怎麼處理",
+          "重感情，有時容易因為太在乎而被情感牽絆",
+          "細膩、敏銳度強，能察覺別人沒注意到的事",
+          "不太習慣開口求助，寧可自己扛"
+        ]
+      },
+      7: {
+        title: "真實與謹慎",
+        representative: "真實與謹慎",
+        traits: ["理性", "內斂", "求真理", "敏銳", "真摯", "好分析"],
+        color: "紫色\n在重要場合、關鍵決定，或任何需要多一點底氣的時刻，試著穿戴這個顏色的衣物或配件，讓本命色為你加持。",
+        advice: "接受事實的真相，面對他、解決他。",
+        caution: [
+          "要特別留意：想得多、行動力需要加強",
+          "職場修煉：有人一起搭配推進，效率會更好"
+        ],
+        description: [
+          "情緒很穩定，不容易被外在影響，重視個人隱私，非常注重細節",
+          "喜怒哀樂不輕易表現出來",
+          "生活穩定富足時，會開始追求心靈層面的滿足",
+          "與人之間界線分明，有邊界感",
+          "擅長分析利弊得失，判斷力很強",
+          "邏輯清晰，很會從對話中抓到關鍵訊息",
+          "當自己的專業被質疑時，會展現出強勢的一面"
+        ]
+      },
+      8: {
+        title: "豐足與權力",
+        representative: "豐足與權力",
+        traits: ["率直", "主控", "肯行動", "務實", "認真", "有遠見"],
+        color: "粉紅色\n在重要場合、關鍵決定，或任何需要多一點底氣的時刻，試著穿戴這個顏色的衣物或配件，讓本命色為你加持。",
+        advice: "對自己誠實，也對別人誠實。",
+        caution: [
+          "要特別留意：固執己見，不改變",
+          "職場修煉：得到權力，更要學習內省"
+        ],
+        description: [
+          "天生的主導者，喜歡掌握全局",
+          "自動自發，但需要清楚知道自己的權限範圍",
+          "做事務實認真，不來虛的",
+          "看得遠、耐得住，願意為長期目標吃苦",
+          "立定目標就會全力以赴，但達成之後需要找到新目標來維持動力",
+          "在沒有主導權的時候很好相處，一旦掌權就展現強勢的領導風格",
+          "為達目標會全力以赴，不輕易放棄"
+        ]
+      },
+      9: {
+        title: "正直與智慧",
+        representative: "正直與智慧",
+        traits: ["慈悲", "執著", "塑性高", "空想", "付出", "重人本"],
+        color: "金黃色\n在重要場合、關鍵決定，或任何需要多一點底氣的時刻，試著穿戴這個顏色的衣物或配件，讓本命色為你加持。",
+        advice: "做夢之前先醒來，要多聽別人專業的建議，你的夢想將更容易達成。",
+        caution: [
+          "要特別留意：容易沉迷於某項人、事、物",
+          "職場修煉：先選定方向，再把夢想落地"
+        ],
+        description: [
+          "一旦喜歡上某樣東西就會全心投入，有收藏的習慣",
+          "適應力很強，能融入不同的環境和人群，但有時反而不確定自己真正要的是什麼",
+          "要做自己有興趣的事，才能真正發揮實力",
+          "看到不公平的事情會忍不住站出來",
+          "學習吸收力佳，悟性很高",
+          "在所有數字中，你是最具大愛精神的，天生願意為他人無私付出，心裡裝的不只是自己，而是更大的世界"
+        ]
+      }
+    };
+
+    const colorThemes = {
+      1: { accent: "#c9413b", soft: "rgba(201, 65, 59, .13)", ink: "#842823", label: "紅色" },
+      2: { accent: "#e57922", soft: "rgba(229, 121, 34, .15)", ink: "#93430f", label: "橙色" },
+      3: { accent: "#f6d765", soft: "rgba(246, 215, 101, .18)", ink: "#876719", label: "鮮黃色" },
+      4: { accent: "#5f8d54", soft: "rgba(95, 141, 84, .14)", ink: "#3f6137", label: "綠色" },
+      5: { accent: "#4d9dc3", soft: "rgba(77, 157, 195, .14)", ink: "#2f6680", label: "天藍色" },
+      6: { accent: "#153a78", soft: "rgba(21, 58, 120, .15)", ink: "#102b58", label: "深藍色" },
+      7: { accent: "#8a65b8", soft: "rgba(138, 101, 184, .14)", ink: "#5f4384", label: "紫色" },
+      8: { accent: "#d66f91", soft: "rgba(214, 111, 145, .14)", ink: "#91445e", label: "粉紅色" },
+      9: {
+        accent: "#d6a51f",
+        soft: "rgba(230, 184, 55, .2)",
+        ink: "#7d5708",
+        label: "金色",
+        fill: "linear-gradient(135deg, #fff0a8 0%, #f4c84a 26%, #c58a12 58%, #ffe28a 100%)"
+      }
+    };
+
+    const nineColorEnergy = [
+      { number: 1, color: "紅色", text: "需要動力與靈感、做重要決定、提振活力、發想新點子的時候。" },
+      { number: 2, color: "橙色", text: "需要多一點耐性、改善人際關係、經營感情、尋找合作機會、居中協調的時候。" },
+      { number: 3, color: "鮮黃色", text: "需要創意靈感、帶領活動、拓展人脈、做溝通企劃的時候。" },
+      { number: 4, color: "綠色", text: "需要安全感、釐清問題、做規劃、讓自己靜下來好好思考的時候。" },
+      { number: 5, color: "天藍色", text: "需要上台表達、展現社交魅力、傾聽他人、希望受到歡迎的時候。" },
+      { number: 6, color: "深藍色", text: "需要為人解決問題、修補關係、希望被重視、願意扛起責任的時候。" },
+      { number: 7, color: "紫色", text: "需要冷靜分析、仔細檢查、審視考核、歸納整理的時候。" },
+      { number: 8, color: "粉紅色", text: "需要主導全局、承擔領導角色、處理重大問題、開創新局面的時候。" },
+      { number: 9, color: "金色", text: "需要運用想像力、幫助他人、讓自己放鬆、展現從容與親和力的時候。" }
+    ];
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function paragraph(value) {
+      return escapeHtml(value).replace(/\n/g, "<br>");
+    }
+
+    function finishSentence(value) {
+      const text = String(value || "").trim();
+      if (!text) return "";
+      return /[。！？!?]$/.test(text) ? text : `${text}。`;
+    }
+
+    function sentenceParagraph(value) {
+      return paragraph(finishSentence(value));
+    }
+
+    function splitTraits(value) {
+      return String(value || "")
+        .split(/[；;、,，｜|]/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+
+    function reduceSteps(number) {
+      const steps = [];
+      let current = number;
+      while (current > 9) {
+        const digits = String(current).split("").map(Number);
+        const next = digits.reduce((sum, digit) => sum + digit, 0);
+        steps.push({ from: current, digits, to: next });
+        current = next;
+      }
+      return { path: current, steps };
+    }
+
+    function formatCombo(talent, reduction) {
+      if (talent <= 9) return `${talent}/${reduction.path}`;
+      return [talent, ...reduction.steps.map((step) => step.to)]
+        .filter((value, index, array) => index === 0 || value !== array[index - 1])
+        .join("/");
+    }
+
+    function normalizeComboLabel(label) {
+      return String(label || "").split("/").map((part) => part.trim()).filter(Boolean).join("/");
+    }
+
+    function normalizeDigits(value) {
+      return String(value || "")
+        .replace(/[０-９]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0xfee0))
+        .replace(/[．。]/g, ".")
+        .replace(/[／]/g, "/")
+        .replace(/[－–—]/g, "-");
+    }
+
+    function parseBirthdateParts(value) {
+      const input = normalizeDigits(value).trim();
+      if (!input) return null;
+
+      const compactMatch = input.replace(/\D/g, "").match(/^(\d{4})(\d{2})(\d{2})$/);
+      if (compactMatch && !/[\/\-.年月日\s]/.test(input)) {
+        return { yearText: compactMatch[1], monthText: compactMatch[2], dayText: compactMatch[3] };
+      }
+
+      const normalized = input
+        .replace(/[年月日]/g, "/")
+        .replace(/[.\-\s\\]+/g, "/")
+        .replace(/\/+/g, "/")
+        .replace(/^\/|\/$/g, "");
+
+      const separatedMatch = normalized.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
+      if (separatedMatch) {
+        return { yearText: separatedMatch[1], monthText: separatedMatch[2], dayText: separatedMatch[3] };
+      }
+
+      const yearAndMonthDayMatch = normalized.match(/^(\d{4})\/(\d{3,4})$/);
+      if (yearAndMonthDayMatch) {
+        const monthDay = yearAndMonthDayMatch[2];
+        return {
+          yearText: yearAndMonthDayMatch[1],
+          monthText: monthDay.length === 3 ? monthDay.slice(0, 1) : monthDay.slice(0, 2),
+          dayText: monthDay.slice(-2)
+        };
+      }
+
+      return null;
+    }
+
+    function parseBirthdate(value) {
+      const parts = parseBirthdateParts(value);
+      if (!parts) return null;
+
+      const { yearText, monthText, dayText } = parts;
+      const yearNumber = Number(yearText);
+      const monthNumber = Number(monthText);
+      const dayNumber = Number(dayText);
+      const date = new Date(yearNumber, monthNumber - 1, dayNumber);
+      const isValid =
+        yearNumber >= 1900 &&
+        yearNumber <= 2099 &&
+        date.getFullYear() === yearNumber &&
+        date.getMonth() === monthNumber - 1 &&
+        date.getDate() === dayNumber;
+
+      if (!isValid) return null;
+
+      return {
+        year: String(yearNumber),
+        month: String(monthNumber).padStart(2, "0"),
+        day: String(dayNumber).padStart(2, "0")
+      };
+    }
+
+    function formatBirthdateWhileTyping(value) {
+      const input = normalizeDigits(value);
+      const hasSeparator = /[\/\-.年月日\s\\]/.test(input);
+      const normalized = input
+        .replace(/[年月日]/g, "/")
+        .replace(/[.\-\s\\]+/g, "/")
+        .replace(/\/+/g, "/");
+
+      const yearAndMonthDay = normalized.match(/^(\d{4})\/(\d{3,4})$/);
+      if (yearAndMonthDay) {
+        const year = yearAndMonthDay[1];
+        const monthDay = yearAndMonthDay[2];
+        const monthLength = monthDay.startsWith("0") || Number(monthDay.slice(0, 2)) <= 12 ? 2 : 1;
+        return `${year}/${monthDay.slice(0, monthLength)}/${monthDay.slice(monthLength)}`;
+      }
+
+      if (hasSeparator) return normalized;
+
+      const digits = input.replace(/\D/g, "").slice(0, 8);
+      if (digits.length <= 4) return digits;
+      if (digits.length <= 6) return `${digits.slice(0, 4)}/${digits.slice(4)}`;
+      return `${digits.slice(0, 4)}/${digits.slice(4, 6)}/${digits.slice(6)}`;
+    }
+
+    function formatBirthdateFinal(value) {
+      const input = normalizeDigits(value);
+      const parsed = parseBirthdate(input);
+      if (parsed) return `${parsed.year}/${parsed.month}/${parsed.day}`;
+
+      const digits = input.replace(/\D/g, "").slice(0, 8);
+      if (/[\/\-.年月日\s\\]/.test(input) && digits.length < 8) return input;
+      if (digits.length <= 4) return digits;
+      if (digits.length <= 6) return `${digits.slice(0, 4)}/${digits.slice(4)}`;
+      return `${digits.slice(0, 4)}/${digits.slice(4, 6)}/${digits.slice(6)}`;
+    }
+
+    function calculate(value) {
+      const parsed = parseBirthdate(value);
+      if (!parsed) return null;
+      const { year, month, day } = parsed;
+
+      const birthNumber = `${year}${month}${day}`;
+      const digits = birthNumber.split("").map(Number);
+      const talentNumber = digits.reduce((sum, digit) => sum + digit, 0);
+      const reduction = reduceSteps(talentNumber);
+      const talentText = String(talentNumber);
+      const bodyNumber = talentText.length === 1 ? 0 : Number(talentText[0]);
+      const mindNumber = talentText.length === 1 ? talentNumber : Number(talentText[1]);
+
+      return {
+        birthNumber,
+        digits,
+        talentNumber,
+        pathNumber: reduction.path,
+        reduction,
+        comboLabel: formatCombo(talentNumber, reduction),
+        bodyNumber,
+        mindNumber,
+        spiritNumber: reduction.path
+      };
+    }
+
+    function numberData(number) {
+      if (number === 0) return { number: 0, title: "潛能放大" };
+      return state.data.numbers.find((item) => item.number === number);
+    }
+
+    function baseData(number) {
+      return state.data.base_number_traits.find((item) => item.number === number);
+    }
+
+    function comboData(result) {
+      const label = normalizeComboLabel(result.comboLabel);
+      if (talentComboLookup[label]) {
+        return {
+          talent_number: result.talentNumber,
+          path_number: result.pathNumber,
+          combo_label: label,
+          original_description: talentComboLookup[label]
+        };
+      }
+      return state.data.talent_combinations.find((item) =>
+        item.talent_number === result.talentNumber && item.path_number === result.pathNumber
+      );
+    }
+
+    function chips(items) {
+      return `<div class="chips">${items.map((item) => `<span class="chip">${escapeHtml(item)}</span>`).join("")}</div>`;
+    }
+
+    function bulletList(items) {
+      return `<ul class="reading-list">${items.map((item) => `<li>${sentenceParagraph(item)}</li>`).join("")}</ul>`;
+    }
+
+    function splitPracticeItems(items, fallback) {
+      const caution = [];
+      let practice = "";
+      for (const item of items || []) {
+        const text = String(item || "").trim();
+        if (text.startsWith("職場修煉：")) {
+          practice = text.replace(/^職場修煉：/, "").trim();
+        } else if (text) {
+          caution.push(text);
+        }
+      }
+      return { caution, practice: practice || fallback || "" };
+    }
+
+    function cleanCautionText(items) {
+      const text = (items || [])
+        .map((item) => String(item || "").replace(/^要特別留意[：:]\s*/, "").trim())
+        .filter(Boolean)
+        .join("；");
+      return finishSentence(text);
+    }
+
+    function splitColorCopy(value) {
+      const [name = "", ...noteParts] = String(value || "").split("\n");
+      return {
+        name: name.trim(),
+        note: noteParts.join("\n").trim()
+      };
+    }
+
+    function applyTheme(number) {
+      const theme = colorThemes[number] || colorThemes[8];
+      document.documentElement.style.setProperty("--accent", theme.accent);
+      document.documentElement.style.setProperty("--accent-fill", theme.fill || theme.accent);
+      document.documentElement.style.setProperty("--accent-soft", theme.soft);
+      document.documentElement.style.setProperty("--accent-ink", theme.ink);
+    }
+
+    function mergedText(original, note) {
+      return `${original || ""}${note ? ` ${note}` : ""}`.trim();
+    }
+
+    const profileNarratives = {
+      1: {
+        caution: "你很容易把目標看得很清楚，也有想帶頭往前衝的衝勁；只是當期待太高、太想一步到位時，反而容易讓自己承受過多壓力。當你願意放慢一點，把開創力放進穩定節奏裡，原本的自信與領導感會更容易被身邊的人信任。",
+        portrait: "你身上有一種不太喜歡被限制的開創氣質，習慣自己判斷方向，也希望事情能照著心中的標準推進。你可以很有創意，也能把想法變成新的可能；但有時會因為太相信自己的判斷，而忽略別人的感受或不同觀點。當你不只追求成功，也願意照顧同行的人，你的影響力會更完整。"
+      },
+      2: {
+        caution: "你重視關係裡的安全感，也很容易顧慮他人的想法，因此在做決定時，可能會反覆衡量、遲遲不敢定案。你的溫和與配合是優點，但如果長期把自己的需求放到最後，情緒會慢慢累積。學會明快表達立場，會讓你的合作力更穩定。",
+        portrait: "你是很適合在團隊、系統與穩定關係中發揮的人，對人忠誠，也願意在細節裡把事情照顧好。你不一定喜歡站在最前面，但常常是讓合作順利推進的重要角色。當你找到值得信任的夥伴與清楚的方法，就容易培養出專業，也能在長期經營中看見成果。"
+      },
+      3: {
+        caution: "你的反應快、點子多，也容易被新的可能性吸引；但如果只停留在靈感和感覺裡，事情可能會大起大落。你需要的不是壓住創意，而是替創意找到落地的方法。當你願意累積基本功、把想法交給節奏與執行承接，才華會更穩。",
+        portrait: "你有很明顯的表達力與感染力，常常能用幽默、創意或臨場反應帶動氣氛。你樂觀，受傷後也容易自己修復，很適合溝通、創作、活動或需要靈活應變的位置。只是你也可能因為怕被責備或怕承認錯誤而想逃開，若能更勇敢面對，會讓人更看見你的成熟。"
+      },
+      4: {
+        caution: "你需要秩序、清楚的方向與穩定的環境，面對雜亂或混亂時會特別耗能。你很能負責，也願意把事情做好，但有時會因為太堅持自己的方式而不容易轉彎。當你在穩定中保留一點彈性，就不會只停在安全的位置，而能繼續成長。",
+        portrait: "你給人的感覺通常比較可靠、務實，也比同齡的人更早熟或更重視責任。你在乎家庭、承諾與長期累積，適合把看不見的專業慢慢做深。你的邏輯與執行力很強，只是情緒和心裡話不一定容易說出口；當你願意表達，身邊的人會更懂你的用心。"
+      },
+      5: {
+        caution: "你很需要自由與新鮮感，也容易在人群裡自然打開話題；但越重視自由，越需要留意關係裡的分寸與承諾。當你只跟著當下的感覺走，可能會忽略別人的感受。學會在表達自己時也照顧關係，會讓你的魅力更有力量。",
+        portrait: "你擅長交朋友，也很容易把氣氛炒熱，說話、生動表達和帶動情緒都是你的優勢。你喜歡新事物，對人對事都有好奇心，也能快速和不同類型的人產生連結。只是你有時會太快轉移注意力，或太重視自己的感覺；當你願意多一點穩定與責任，反而會更受歡迎。"
+      },
+      6: {
+        caution: "你很容易把別人的需要放在心上，也常常願意伸手幫忙；但如果一直照顧別人，卻沒有照顧自己的位置，會慢慢失去重心。你的溫暖是很珍貴的力量，只是也需要界線。先安頓好自己，再去支持他人，你的付出會更長久。",
+        portrait: "你有關懷、安撫與陪伴人的能力，對關係和情義很敏銳，也容易在團隊中扮演照顧者或協調者。你追求和諧，不喜歡衝突，做事也常有完美要求。當你發揮得好時，很適合服務、輔導、整合與支持型角色；但也要記得，有些問題不是你一個人必須扛起來。"
+      },
+      7: {
+        caution: "你很會觀察，也習慣先想清楚再行動，因此有時會卡在分析、評估與等待裡。謹慎是你的優點，但如果想得太多而遲遲不開始，機會也可能從旁邊溜走。替自己設定一個可執行的小步驟，會比一直追求完美答案更有幫助。",
+        portrait: "你不是容易被表面情緒帶走的人，重視真相、邏輯、隱私與專業，也很會從細節中看出問題。你有分析利弊得失的能力，適合研究、檢查、規劃或需要深度判斷的事情。你看似冷靜，但其實對信任和界線很敏感；當你願意適度表達，別人會更容易靠近真正的你。"
+      },
+      8: {
+        caution: "你有明確目標，也習慣用務實的方法把事情推進；但越有主導力，越需要保留彈性與自我覺察。當你太堅持自己的判斷，或在達成目標後失去下一步動力，就容易讓原本的能力被卡住。學會授權、調整與重新設定目標，會讓你的格局更大。",
+        portrait: "你身上有掌握方向與配置資源的能力，做事務實、認真，也看得比眼前更遠。你可以吃苦，也願意為目標投入，只要方向清楚，就能帶著團隊走向成果。需要留意的是，當你擁有主導權時，別忘了給別人空間；真正成熟的力量，不只是掌控，而是能讓更多人一起成事。"
+      },
+      9: {
+        caution: "你很容易被有興趣、有意義的人事物吸引，也可能一投入就陷得很深。你的理想感和想像力很強，但如果缺少實際步驟，就容易停在計畫或感覺裡。當你把夢想拆成可以執行的行動，你的悟性與吸收力會變成真正的成果。",
+        portrait: "你有同理、想像與吸收能力，對有意義的事情特別有感，也適合投入能幫助人、啟發人或讓自己有興趣的方向。你可塑性高，容易因環境和對象展現不同樣貌；只是有時也會迷惘，不確定自己真正要的是什麼。當你把興趣和務實結合，就更容易走出自己的路。"
+      }
+    };
+
+    function renderDestiny(result, profile, combo) {
+      $("#destinySection").innerHTML = `
+        <div class="section-head">
+          <p class="section-kicker">你的數字命盤</p>
+          <h2>你的生涯運數解析報告</h2>
+          <p class="lead">協助你看見自己的慣性與天賦。</p>
+        </div>
+        <div class="destiny-board">
+          <div class="facts-grid">
+            <article class="fact is-birth"><span>你的生辰數</span><strong>${result.birthNumber}</strong></article>
+            <article class="fact"><span>你的天賦數</span><strong>${result.talentNumber}</strong></article>
+            <article class="fact"><span>你的生涯運數</span><strong>${result.pathNumber}</strong></article>
+            <article class="fact"><span>你的天賦組合</span><strong>${escapeHtml(normalizeComboLabel(combo?.combo_label) || result.comboLabel)}</strong></article>
+          </div>
+          <div class="number-mark" aria-label="生涯運數 ${result.pathNumber}">
+            <div>
+              <span>生涯運數</span>
+              <strong>${result.pathNumber}</strong>
+              <span>${escapeHtml(profile.title)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderLayerCard(kind, number) {
+      const info = numberData(number);
+      const copy = layerCopy[kind];
+      const narrative = trinityCopy[number]?.[kind] || "";
+      return `
+        <article class="card">
+          <div class="layer-label">${copy.title}</div>
+          <div class="layer-number">${number}</div>
+          <h3>${escapeHtml(info?.title || "")}</h3>
+          <p class="card-note">${sentenceParagraph(narrative)}</p>
+        </article>
+      `;
+    }
+
+    function renderTrinity(result) {
+      $("#trinitySection").innerHTML = `
+        <div class="section-head">
+          <p class="section-kicker">身 · 心 · 靈</p>
+          <h2>你的三層天賦</h2>
+          <p class="lead">這三張卡片分別呈現你給人的第一印象、內在真正重視的感受，以及驅動你往前走的深層力量。</p>
+        </div>
+        <div class="trinity">
+          ${renderLayerCard("body", result.bodyNumber)}
+          ${renderLayerCard("mind", result.mindNumber)}
+          ${renderLayerCard("spirit", result.spiritNumber)}
+        </div>
+      `;
+    }
+
+    function renderProfile(profile) {
+      const lifePath = lifePathLookup[profile.number];
+      const traitList = lifePath?.traits || [];
+      const colorCopy = splitColorCopy(lifePath?.color);
+      const { caution, practice } = splitPracticeItems(lifePath?.caution, profile.work_practice);
+      $("#profileSection").innerHTML = `
+        <div class="section-head">
+          <p class="section-kicker">生涯運數</p>
+          <h2>你的生涯運數：${profile.number}｜${escapeHtml(lifePath?.title || "")}</h2>
+        </div>
+        <div class="profile-flow">
+          <div class="profile-summary">
+            <article class="card trait-card">
+              <h3>六大表徵</h3>
+              ${chips(traitList)}
+            </article>
+            <article class="card life-color-card">
+              <h3>本命色</h3>
+              <div class="life-color-main">
+                <span class="life-color-chip" aria-hidden="true"></span>
+                <strong class="life-color-name">${paragraph(colorCopy.name)}</strong>
+              </div>
+              <p class="life-color-note">${paragraph(colorCopy.note)}</p>
+            </article>
+          </div>
+          <div class="profile-readings">
+            <div class="reading-box portrait-box">
+              <div class="reading-title">可能會有點像你</div>
+              ${bulletList(lifePath?.description || [])}
+            </div>
+            <div class="profile-aside">
+              <div class="reading-box aside-card">
+                <div class="reading-title">需要留意的地方</div>
+                <p>${paragraph(cleanCautionText(caution))}</p>
+              </div>
+              <article class="card aside-card practice-card">
+                <h3>職場修煉</h3>
+                <p>${sentenceParagraph(practice)}</p>
+              </article>
+              <article class="card aside-card">
+                <h3>建言</h3>
+                <p>${sentenceParagraph(lifePath?.advice || "")}</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCombo(result, profile, combo) {
+      const label = normalizeComboLabel(combo?.combo_label || result.comboLabel);
+      const comboMessage = combo?.original_description || "此天賦組合尚未收錄於完整對照表。";
+      $("#comboSection").innerHTML = `
+        <div class="section-head">
+          <p class="section-kicker">專屬天賦組合</p>
+          <h2>你的專屬天賦組合：${escapeHtml(label)}</h2>
+          <p class="lead">依照天賦數與生涯運數對照表，這是你的完整組合編號。</p>
+        </div>
+        <div class="reading-box">
+          <div class="reading-title">你的組合個性</div>
+          <p>${sentenceParagraph(comboMessage)}</p>
+        </div>
+      `;
+    }
+
+    function renderClosing() {
+      $("#closingSection").innerHTML = `
+        <div class="closing">
+          <h2>給你的提醒</h2>
+          <p class="lead">生涯運數不是要限制你，而是提供一個輕鬆的角度，幫助你更快看見自己的節奏。讀到有感的地方，可以當成提醒；讀到不完全像的地方，也可以拿來想想現在的你正在往哪裡調整。</p>
+          <p class="disclaimer">${paragraph(state.data.disclaimer)}</p>
+        </div>
+      `;
+    }
+
+    function renderNineColors() {
+      const cards = nineColorEnergy.map((item) => {
+        const theme = colorThemes[item.number] || colorThemes[8];
+        return `
+          <article class="color-energy-card" style="--energy-color:${theme.fill || theme.accent};--energy-soft:${theme.soft}">
+            <div class="color-chip-large">${item.number}</div>
+            <div class="color-energy-copy">
+              <h3>${escapeHtml(item.color)}</h3>
+              <p>${paragraph(item.text)}</p>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      $("#nineColorSection").innerHTML = `
+        <div class="section-head">
+          <p class="section-kicker">九色能量</p>
+          <h2>九色能量：不同時刻，借用不同力量</h2>
+          <p class="lead">不只是你的本命色可以用——每一種顏色都有它的力量。根據你當天面對的事情，選擇對應的顏色穿戴，讓那個數字的能量支持你。</p>
+        </div>
+        <div class="nine-color-grid">
+          ${cards}
+        </div>
+      `;
+    }
+
+    function renderReport() {
+      const birthdateInput = $("#birthdate");
+      birthdateInput.value = formatBirthdateFinal(birthdateInput.value);
+      const result = calculate(birthdateInput.value);
+      if (!result) {
+        $("#errorMessage").textContent = "請先輸入有效的西元出生年月日。";
+        return;
+      }
+
+      const profile = numberData(result.pathNumber);
+      const combo = comboData(result);
+      if (!profile) {
+        $("#errorMessage").textContent = "資料中找不到對應的生涯運數解析。";
+        return;
+      }
+
+      $("#errorMessage").textContent = "";
+      applyTheme(profile.number);
+      renderDestiny(result, profile, combo);
+      renderTrinity(result);
+      renderProfile(profile);
+      renderCombo(result, profile, combo);
+      renderNineColors();
+      renderClosing();
+      $("#report").classList.add("is-visible");
+      $("#report").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    async function loadData() {
+      if (window.LIFE_PATH_DATA) {
+        state.data = window.LIFE_PATH_DATA;
+        $("#startButton").disabled = false;
+        return;
+      }
+      $("#startButton").disabled = true;
+      $("#errorMessage").textContent = "資料尚未載入，請重新整理頁面。";
+    }
+
+    $("#startButton").addEventListener("click", renderReport);
+    $("#birthdate").addEventListener("input", (event) => {
+      event.target.value = formatBirthdateWhileTyping(event.target.value);
+    });
+    $("#birthdate").addEventListener("blur", (event) => {
+      event.target.value = formatBirthdateFinal(event.target.value);
+    });
+    $("#birthdate").addEventListener("keydown", (event) => {
+      if (event.key === "Enter") renderReport();
+    });
+    $("#birthdate").value = "";
+    $("#startButton").disabled = true;
+    loadData();
+  </script>
+</body>
+</html>
+
